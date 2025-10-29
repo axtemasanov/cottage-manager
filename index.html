@@ -1,7 +1,4 @@
-                                            <div>
-                                                <div class="status-badge ${resident.status === 'active' ? 'status-active' : 'status-inactive'}">
-                                                    ${resident.status === 'active' ? '🟢 Проживает' : '🔴 Выселен'}
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -50,11 +47,6 @@
             margin-bottom: 10px;
         }
 
-        .login-container p {
-            color: #6c757d;
-            margin-bottom: 20px;
-        }
-
         .login-input {
             width: 100%;
             padding: 15px;
@@ -63,11 +55,6 @@
             font-size: 16px;
             margin-bottom: 20px;
             text-align: center;
-        }
-
-        .login-input:focus {
-            outline: none;
-            border-color: #667eea;
         }
 
         .login-error {
@@ -99,13 +86,8 @@
         }
         
         .header h1 {
-            font-size: 2.5em;
+            font-size: 2em;
             margin-bottom: 10px;
-        }
-        
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
         }
         
         .header-actions {
@@ -124,12 +106,6 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-header:hover {
-            background: white;
-            color: #2c3e50;
         }
         
         .tabs {
@@ -140,15 +116,13 @@
         
         .tab {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             cursor: pointer;
             border: none;
             background: transparent;
             font-size: 16px;
-            font-weight: 600;
             color: #6c757d;
-            transition: all 0.3s ease;
         }
         
         .tab.active {
@@ -159,7 +133,7 @@
         
         .tab-content {
             display: none;
-            padding: 30px;
+            padding: 20px;
         }
         
         .tab-content.active {
@@ -169,86 +143,47 @@
         .main-content {
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 30px;
+            gap: 20px;
         }
         
         .form-section {
             background: #f8f9fa;
-            padding: 25px;
+            padding: 20px;
             border-radius: 10px;
             border: 2px solid #e9ecef;
-            height: fit-content;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 600;
             color: #495057;
         }
         
         .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-group select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 2px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .photo-upload {
-            position: relative;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .photo-upload:hover {
-            border-color: #667eea;
-        }
-        
-        .photo-preview {
-            max-width: 150px;
-            max-height: 150px;
-            border-radius: 8px;
-            margin: 10px auto;
-            display: none;
+            border-radius: 5px;
+            font-size: 14px;
         }
         
         .btn {
-            padding: 12px 25px;
+            padding: 10px 15px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 5px;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
             margin: 5px;
         }
         
         .btn-primary {
             background: #667eea;
-            color: white;
-        }
-        
-        .btn-success {
-            background: #28a745;
             color: white;
         }
         
@@ -258,53 +193,38 @@
         }
         
         .search-section {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
+            margin-bottom: 15px;
         }
         
         .search-input {
-            flex: 1;
-            padding: 15px;
+            width: 100%;
+            padding: 10px;
             border: 2px solid #dee2e6;
-            border-radius: 10px;
-            font-size: 16px;
-            background: white;
-            min-width: 200px;
+            border-radius: 5px;
+            font-size: 14px;
         }
         
         .residents-container {
             background: #f8f9fa;
             border-radius: 10px;
-            max-height: 600px;
+            padding: 15px;
+            max-height: 500px;
             overflow-y: auto;
-            padding: 20px;
         }
         
         .resident-card {
             background: white;
-            padding: 20px;
+            padding: 15px;
             margin: 10px 0;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             border-left: 4px solid #667eea;
         }
         
         .resident-info {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 15px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-        }
-        
-        .resident-photo {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #667eea;
         }
         
         .sync-status {
@@ -313,12 +233,10 @@
             right: 10px;
             padding: 10px 15px;
             border-radius: 5px;
-            font-size: 14px;
+            font-size: 12px;
             z-index: 1000;
         }
         .sync-success { background: #d4edda; color: #155724; }
-        .sync-error { background: #f8d7da; color: #721c24; }
-        .sync-loading { background: #fff3cd; color: #856404; }
     </style>
 </head>
 <body>
@@ -345,12 +263,12 @@
     <div class="container" id="mainApp">
         <div class="header">
             <div class="header-actions">
-                <button class="btn-header" onclick="syncData()" id="syncBtn">🔄 Синхронизировать</button>
+                <button class="btn-header" onclick="exportData()">📥 Экспорт</button>
+                <button class="btn-header" onclick="importData()">📤 Импорт</button>
                 <button class="btn-header" onclick="logout()">🚪 Выход</button>
             </div>
             <h1>🏘️ Управление коттеджами Pro</h1>
             <p>Система заселения и выселения жильцов</p>
-            <p><strong>Автор: Ахтем</strong></p>
         </div>
         
         <div class="tabs">
@@ -362,37 +280,52 @@
         <div id="residents-tab" class="tab-content active">
             <div class="main-content">
                 <div class="form-section">
-                    <h2>📝 Регистрация жильца</h2>
+                    <h3>📝 Регистрация жильца</h3>
                     <form id="residentForm">
                         <div class="form-group">
-                            <label for="firstName">Имя:</label>
+                            <label>Имя:</label>
                             <input type="text" id="firstName" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="lastName">Фамилия:</label>
+                            <label>Фамилия:</label>
                             <input type="text" id="lastName" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="phone">Телефон:</label>
+                            <label>Телефон:</label>
                             <input type="tel" id="phone">
                         </div>
                         
                         <div class="form-group">
-                            <label for="house">Дом:</label>
+                            <label>Дом:</label>
                             <select id="house" required>
                                 <option value="">Выберите дом</option>
                                 <option value="9">Дом 9</option>
                                 <option value="9A">Дом 9А</option>
                                 <option value="8">Дом 8</option>
                                 <option value="8A">Дом 8А</option>
+                                <option value="1">Коттедж 1</option>
+                                <option value="2">Коттедж 2</option>
+                                <option value="3">Коттедж 3</option>
+                                <option value="4">Коттедж 4</option>
+                                <option value="5">Коттедж 5</option>
+                                <option value="6">Коттедж 6</option>
+                                <option value="7">Коттедж 7</option>
+                                <option value="8">Коттедж 8</option>
+                                <option value="9">Коттедж 9</option>
+                                <option value="10">Коттедж 10</option>
+                                <option value="11">Коттедж 11</option>
+                                <option value="12">Коттедж 12</option>
+                                <option value="13">Коттедж 13</option>
+                                <option value="14">Коттедж 14</option>
+                                <option value="15">Коттедж 15</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
-                            <label for="apartment">Квартира:</label>
-                            <input type="text" id="apartment" required>
+                            <label>Квартира:</label>
+                            <input type="text" id="apartment" required placeholder="Номер квартиры">
                         </div>
                         
                         <button type="submit" class="btn btn-primary">✅ Заселить</button>
@@ -402,7 +335,7 @@
                 
                 <div>
                     <div class="search-section">
-                        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Поиск...">
+                        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Поиск по имени, фамилии, дому...">
                     </div>
                     
                     <div class="residents-container" id="residentsContainer">
@@ -414,7 +347,7 @@
         
         <!-- Вкладка Дома -->
         <div id="cottages-tab" class="tab-content">
-            <h2>🏠 Обзор домов</h2>
+            <h3>🏠 Обзор домов</h3>
             <div id="cottageGrid">
                 <!-- Дома будут здесь -->
             </div>
@@ -424,8 +357,32 @@
     <script>
         // ==================== КОНФИГУРАЦИЯ ====================
         const APP_PASSWORD = "admin123";
-        const GITHUB_TOKEN = ""; // Оставь пустым - будем использовать localStorage
-        const DATA_KEY = "cottage_data";
+        const DATA_KEY = "cottage_residents_data";
+
+        // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
+        let residents = [];
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Автофокус на поле пароля
+            document.getElementById('passwordInput').focus();
+            
+            // Обработчик Enter в поле пароля
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') checkPassword();
+            });
+            
+            // Обработчик формы
+            document.getElementById('residentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addResident();
+            });
+            
+            // Обработчик поиска
+            document.getElementById('searchInput').addEventListener('input', function() {
+                displayResidents();
+            });
+        });
 
         // ==================== СИСТЕМА АУТЕНТИФИКАЦИИ ====================
         function checkPassword() {
@@ -433,120 +390,163 @@
             const errorDiv = document.getElementById('loginError');
             
             if (password === APP_PASSWORD) {
+                // Скрываем окно входа, показываем приложение
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
+                
+                // Загружаем данные и обновляем интерфейс
                 loadData();
+                updateInterface();
             } else {
                 errorDiv.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
             }
         }
 
-        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkPassword();
-        });
-
         function logout() {
-            document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('loginError').style.display = 'none';
+            if (confirm('Выйти из системы?')) {
+                document.getElementById('loginOverlay').style.display = 'flex';
+                document.getElementById('mainApp').style.display = 'none';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('loginError').style.display = 'none';
+            }
         }
 
         // ==================== СИСТЕМА ДАННЫХ ====================
-        let residents = [];
-
         function loadData() {
-            const saved = localStorage.getItem(DATA_KEY);
-            if (saved) {
-                residents = JSON.parse(saved);
+            try {
+                const savedData = localStorage.getItem(DATA_KEY);
+                if (savedData) {
+                    residents = JSON.parse(savedData);
+                    console.log('✅ Данные загружены:', residents.length, 'жильцов');
+                } else {
+                    residents = [];
+                    console.log('📝 Нет сохраненных данных, начинаем с чистого листа');
+                }
+            } catch (error) {
+                console.error('❌ Ошибка загрузки данных:', error);
+                residents = [];
             }
-            displayResidents();
-            displayHouses();
         }
 
         function saveData() {
-            localStorage.setItem(DATA_KEY, JSON.stringify(residents));
-            showSyncStatus("✅ Данные сохранены", "sync-success");
+            try {
+                localStorage.setItem(DATA_KEY, JSON.stringify(residents));
+                showSyncStatus("✅ Данные сохранены");
+                console.log('💾 Данные сохранены:', residents.length, 'жильцов');
+            } catch (error) {
+                console.error('❌ Ошибка сохранения данных:', error);
+                showSyncStatus("❌ Ошибка сохранения", "sync-error");
+            }
         }
 
-        function showSyncStatus(message, type) {
+        function showSyncStatus(message, type = "sync-success") {
+            // Удаляем предыдущий статус если есть
+            const oldStatus = document.querySelector('.sync-status');
+            if (oldStatus) oldStatus.remove();
+            
             const status = document.createElement('div');
             status.className = `sync-status ${type}`;
             status.textContent = message;
             document.body.appendChild(status);
             
-            setTimeout(() => {
-                status.remove();
-            }, 3000);
+            setTimeout(() => status.remove(), 2000);
         }
 
         // ==================== УПРАВЛЕНИЕ ЖИЛЬЦАМИ ====================
-        document.getElementById('residentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
+        function addResident() {
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const house = document.getElementById('house').value;
             const apartment = document.getElementById('apartment').value.trim();
             
+            // Валидация
             if (!firstName || !lastName || !house || !apartment) {
-                alert('Заполните все поля!');
+                alert('❌ Заполните все обязательные поля!');
                 return;
             }
 
+            // Создаем объект жильца
             const resident = {
-                id: Date.now(),
-                firstName,
-                lastName,
-                phone,
-                house,
-                apartment,
+                id: Date.now(), // Уникальный ID на основе времени
+                firstName: firstName,
+                lastName: lastName,
+                phone: phone,
+                house: house,
+                apartment: apartment,
                 checkInDate: new Date().toLocaleDateString('ru-RU'),
+                checkInTime: new Date().toLocaleTimeString('ru-RU'),
                 status: 'active'
             };
 
+            // Добавляем в массив
             residents.push(resident);
+            
+            // Сохраняем и обновляем интерфейс
             saveData();
-            displayResidents();
-            displayHouses();
+            updateInterface();
             clearForm();
             
-            alert(`${firstName} ${lastName} заселен в дом ${house}, кв. ${apartment}`);
-        });
+            // Уведомление
+            alert(`✅ ${firstName} ${lastName} заселен в дом ${house}, кв. ${apartment}`);
+        }
+
+        function removeResident(id) {
+            const resident = residents.find(r => r.id === id);
+            if (resident && confirm(`Удалить жильца ${resident.firstName} ${resident.lastName}?`)) {
+                residents = residents.filter(r => r.id !== id);
+                saveData();
+                updateInterface();
+            }
+        }
 
         function clearForm() {
             document.getElementById('residentForm').reset();
+        }
+
+        // ==================== ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ====================
+        function updateInterface() {
+            displayResidents();
+            displayHouses();
         }
 
         function displayResidents() {
             const container = document.getElementById('residentsContainer');
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             
+            // Фильтрация по поисковому запросу
             let filteredResidents = residents;
             if (searchTerm) {
                 filteredResidents = residents.filter(r => 
                     r.firstName.toLowerCase().includes(searchTerm) ||
                     r.lastName.toLowerCase().includes(searchTerm) ||
                     r.house.toLowerCase().includes(searchTerm) ||
-                    r.apartment.toLowerCase().includes(searchTerm)
+                    r.apartment.toLowerCase().includes(searchTerm) ||
+                    (r.phone && r.phone.includes(searchTerm))
                 );
             }
 
+            // Сортируем по дате добавления (новые сверху)
+            filteredResidents.sort((a, b) => b.id - a.id);
+
+            // Отображаем
             if (filteredResidents.length === 0) {
-                container.innerHTML = '<p style="text-align: center; padding: 20px;">Нет жильцов</p>';
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #6c757d;">' +
+                    '<h4>Жильцы не найдены</h4>' +
+                    '<p>Добавьте первого жильца или измените поисковый запрос</p>' +
+                    '</div>';
                 return;
             }
 
             container.innerHTML = filteredResidents.map(resident => `
                 <div class="resident-card">
                     <div class="resident-info">
-                        <div class="resident-details">
-                            <h3>${resident.firstName} ${resident.lastName}</h3>
+                        <div>
+                            <h4>${resident.firstName} ${resident.lastName}</h4>
                             <p>📍 Дом ${resident.house}, кв. ${resident.apartment}</p>
                             ${resident.phone ? `<p>📞 ${resident.phone}</p>` : ''}
-                            <p>📅 Заселен: ${resident.checkInDate}</p>
+                            <p>📅 Заселен: ${resident.checkInDate} ${resident.checkInTime}</p>
                         </div>
                         <div>
                             <button class="btn btn-danger" onclick="removeResident(${resident.id})">
@@ -558,79 +558,76 @@
             `).join('');
         }
 
-        function removeResident(id) {
-            if (confirm('Удалить жильца?')) {
-                residents = residents.filter(r => r.id !== id);
-                saveData();
-                displayResidents();
-                displayHouses();
-            }
-        }
-
-        // ==================== ОТОБРАЖЕНИЕ ДОМОВ ====================
         function displayHouses() {
             const container = document.getElementById('cottageGrid');
             const houses = {
                 '9': 'Дом 9',
                 '9A': 'Дом 9А', 
                 '8': 'Дом 8',
-                '8A': 'Дом 8А'
+                '8A': 'Дом 8А',
+                '1': 'Коттедж 1', '2': 'Коттедж 2', '3': 'Коттедж 3', '4': 'Коттедж 4', '5': 'Коттедж 5',
+                '6': 'Коттедж 6', '7': 'Коттедж 7', '8': 'Коттедж 8', '9': 'Коттедж 9', '10': 'Коттедж 10',
+                '11': 'Коттедж 11', '12': 'Коттедж 12', '13': 'Коттедж 13', '14': 'Коттедж 14', '15': 'Коттедж 15'
             };
 
-            container.innerHTML = Object.entries(houses).map(([id, name]) => {
-                const houseResidents = residents.filter(r => r.house === id);
+            const houseStats = Object.keys(houses).map(houseId => {
+                const houseResidents = residents.filter(r => r.house === houseId);
                 const apartments = [...new Set(houseResidents.map(r => r.apartment))];
                 
-                return `
-                    <div class="resident-card">
-                        <h3>${name}</h3>
-                        <p>Жильцов: ${houseResidents.length}</p>
-                        <p>Занято квартир: ${apartments.length}</p>
-                        <div style="margin-top: 10px;">
-                            ${houseResidents.map(r => 
-                                `<div style="padding: 5px 0; border-bottom: 1px solid #eee;">
-                                    ${r.firstName} ${r.lastName} - кв. ${r.apartment}
-                                </div>`
+                return {
+                    id: houseId,
+                    name: houses[houseId],
+                    residentsCount: houseResidents.length,
+                    apartmentsCount: apartments.length,
+                    residents: houseResidents
+                };
+            });
+
+            container.innerHTML = houseStats.map(house => `
+                <div class="resident-card">
+                    <h4>${house.name}</h4>
+                    <p><strong>Жильцов:</strong> ${house.residentsCount}</p>
+                    <p><strong>Занято квартир:</strong> ${house.apartmentsCount}</p>
+                    ${house.residents.length > 0 ? `
+                        <div style="margin-top: 10px; border-top: 1px solid #dee2e6; padding-top: 10px;">
+                            <strong>Жильцы:</strong>
+                            ${house.residents.map(r => 
+                                `<div style="padding: 2px 0;">${r.firstName} ${r.lastName} - кв. ${r.apartment}</div>`
                             ).join('')}
                         </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // ==================== ПОИСК ====================
-        document.getElementById('searchInput').addEventListener('input', displayResidents);
-
-        // ==================== СИНХРОНИЗАЦИЯ ====================
-        function syncData() {
-            // Показываем статус синхронизации
-            showSyncStatus("🔄 Синхронизация...", "sync-loading");
-            
-            // В будущем здесь можно добавить синхронизацию с GitHub
-            setTimeout(() => {
-                showSyncStatus("✅ Данные синхронизированы", "sync-success");
-            }, 1000);
+                    ` : ''}
+                </div>
+            `).join('');
         }
 
         // ==================== УПРАВЛЕНИЕ ВКЛАДКАМИ ====================
         function showTab(tabName) {
+            // Скрываем все вкладки
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
             
+            // Убираем активный класс со всех кнопок
             document.querySelectorAll('.tab').forEach(btn => {
                 btn.classList.remove('active');
             });
             
+            // Показываем выбранную вкладку
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
+            
+            // Обновляем данные если нужно
+            if (tabName === 'cottages') {
+                displayHouses();
+            }
         }
 
         // ==================== ЭКСПОРТ/ИМПОРТ ====================
         function exportData() {
             const data = {
                 residents: residents,
-                exportDate: new Date().toISOString()
+                exportDate: new Date().toISOString(),
+                totalResidents: residents.length
             };
             
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -642,465 +639,36 @@
             URL.revokeObjectURL(url);
         }
 
-        function importData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
             
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.residents) {
-                        residents = data.residents;
-                        saveData();
-                        displayResidents();
-                        displayHouses();
-                        alert('Данные импортированы!');
-                    }
-                } catch (error) {
-                    alert('Ошибка при импорте данных!');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // Автоматически фокусируемся на поле пароля при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('passwordInput').focus();
-        });
-    </script>
-</body>
-</html>                                          </div>
-                                                <div class="resident-actions">
-                                                    <button class="btn btn-warning" onclick="cottageManager.toggleMark(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                        ★ Отмечен
-                                                    </button>
-                                                    ${resident.status === 'active' ? 
-                                                        `<button class="btn btn-warning" onclick="cottageManager.editResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                            ✏️ Изменить
-                                                        </button>
-                                                        <button class="btn btn-danger" onclick="cottageManager.removeResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                            🚪 Выселить
-                                                        </button>` : ''
-                                                    }
-                                                    <button class="btn" onclick="cottageManager.deleteResident(${resident.id})" style="background: #6c757d; color: white; padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                        🗑️ Удалить
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `}).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
                 
-                this.houses.forEach(house => {
-                    const houseResidents = residentsByHouse[house.id].filter(r => !r.marked);
-                    if (houseResidents.length === 0) return;
-                    
-                    hasResidents = true;
-                    const isExpanded = this.expandedHouses.has(house.id);
-                    const activeCount = houseResidents.filter(r => r.status === 'active').length;
-                    const totalCount = houseResidents.length;
-                    
-                    html += `
-                        <div class="house-section">
-                            <div class="house-header" onclick="cottageManager.toggleHouseExpansion('${house.id}')">
-                                <h3>${house.name.includes('Дом') ? '🏢' : '🏠'} ${house.name}</h3>
-                                <div class="house-count">${activeCount}/${totalCount} жильцов</div>
-                            </div>
-                            <div class="house-residents ${isExpanded ? 'expanded' : ''}">
-                                ${houseResidents.map(resident => {
-                                    const apartmentText = this.getApartmentText(resident.apartment, house);
-                                    return `
-                                    <div class="resident-card">
-                                        <div class="resident-info">
-                                            <img src="${resident.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNlOWVjZWYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxOCIgeT0iMTgiPgo8cGF0aCBkPSJNMTIgMTJDMTQuMjA5MSAxMiAxNiAxMC4yMDkxIDE2IDhDMTYgNS43OTA5IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwOSA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxNEM5LjMzIDEzLjk5IDcuMDEgMTUuNjIgNiAxOEgxOEMxNi45OSAxNS42MiAxNC42NyAxMy45OSAxMiAxNFoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPgo='}" 
-                                                     alt="Фото" class="resident-photo">
-                                            <div class="resident-details">
-                                                <h3>${resident.firstName} ${resident.lastName}</h3>
-                                                <p>📍 ${apartmentText}</p>
-                                                ${resident.phone ? `<p>📞 ${resident.phone}</p>` : ''}
-                                                <p>📅 Заселен: ${resident.checkInDate} ${resident.checkInTime}</p>
-                                                ${resident.checkOutDate ? `<p>📅 Выселен: ${resident.checkOutDate} ${resident.checkOutTime}</p>` : ''}
-                                                ${resident.notes ? `<p>📝 ${resident.notes}</p>` : ''}
-                                            </div>
-                                            <div>
-                                                <div class="status-badge ${resident.status === 'active' ? 'status-active' : 'status-inactive'}">
-                                                    ${resident.status === 'active' ? '🟢 Проживает' : '🔴 Выселен'}
-                                                </div>
-                                                <div class="resident-actions">
-                                                    <button class="btn btn-star" onclick="cottageManager.toggleMark(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                        ☆ Отметить
-                                                    </button>
-                                                    ${resident.status === 'active' ? 
-                                                        `<button class="btn btn-warning" onclick="cottageManager.editResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                            ✏️ Изменить
-                                                        </button>
-                                                        <button class="btn btn-danger" onclick="cottageManager.removeResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                            🚪 Выселить
-                                                        </button>` : ''
-                                                    }
-                                                    <button class="btn" onclick="cottageManager.deleteResident(${resident.id})" style="background: #6c757d; color: white; padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                        🗑️ Удалить
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `}).join('')}
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                if (!hasResidents) {
-                    html = `
-                        <div class="empty-state">
-                            <h3>Жильцы не найдены</h3>
-                            <p>Добавьте первого жильца или измените фильтры</p>
-                        </div>
-                    `;
-                }
-                
-                container.innerHTML = html;
-            }
-            
-            displayHouses() {
-                const container = document.getElementById('cottageGrid');
-                
-                container.innerHTML = this.houses.map(house => {
-                    const houseResidents = this.residents.filter(r => r.houseId === house.id && r.status === 'active');
-                    const occupiedApartments = new Set(houseResidents.map(r => r.apartment)).size;
-                    
-                    const floors = [];
-                    let currentFloor = 1;
-                    let apartmentsInCurrentFloor = [];
-                    
-                    house.apartmentNumbers.forEach((apt, index) => {
-                        if (apt.floor !== currentFloor && apartmentsInCurrentFloor.length > 0) {
-                            floors.push({
-                                number: currentFloor,
-                                apartments: [...apartmentsInCurrentFloor]
-                            });
-                            apartmentsInCurrentFloor = [];
-                            currentFloor = apt.floor;
-                        }
-                        
-                        const residents = houseResidents.filter(r => r.apartment === apt.number);
-                        apartmentsInCurrentFloor.push({
-                            number: apt.number,
-                            residents,
-                            occupied: residents.length > 0
-                        });
-                        
-                        if (index === house.apartmentNumbers.length - 1) {
-                            floors.push({
-                                number: currentFloor,
-                                apartments: [...apartmentsInCurrentFloor]
-                            });
-                        }
-                    });
-                    
-                    return `
-                        <div class="cottage-card">
-                            <h3>${house.name.includes('Дом') ? '🏢' : '🏠'} ${house.name}</h3>
-                            <p style="text-align: center; margin-bottom: 15px; color: #6c757d;">
-                                Заполненность: ${occupiedApartments}/${house.totalApartments}
-                            </p>
-                            <div class="apartment-grid">
-                                ${floors.map(floor => `
-                                    <div class="floor-section">
-                                        <div class="floor-title">${floor.number} этаж</div>
-                                        <div class="floor-apartments" style="grid-template-columns: repeat(${Math.min(house.apartmentsPerFloor, 11)}, 1fr);">
-                                            ${floor.apartments.map(apt => `
-                                                <div class="apartment ${apt.occupied ? 'occupied' : 'free'}" 
-                                                     onclick="cottageManager.showApartmentResidents('${house.id}', '${apt.number}')"
-                                                     title="Кликните для просмотра жильцов">
-                                                    ${house.apartmentsPerFloor > 1 ? `Кв.${apt.number}` : 'Кв.'}
-                                                    ${apt.occupied ? `👤` : '🏠'}
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-            
-            showApartmentResidents(houseId, apartmentNumber) {
-                const residentsInApartment = this.residents.filter(r => 
-                    r.houseId === houseId && 
-                    r.apartment === apartmentNumber && 
-                    r.status === 'active'
-                );
-                
-                const modal = document.getElementById('apartmentModal');
-                const title = document.getElementById('apartmentModalTitle');
-                const list = document.getElementById('apartmentResidentsList');
-                
-                const houseName = this.getHouseName(houseId);
-                const house = this.houses.find(h => h.id === houseId);
-                const apartmentText = house ? this.getApartmentText(apartmentNumber, house) : `кв. ${apartmentNumber}`;
-                
-                title.textContent = `Жильцы в ${houseName}, ${apartmentText}`;
-                
-                if (residentsInApartment.length === 0) {
-                    list.innerHTML = '<p style="text-align: center; padding: 20px; color: #6c757d;">Квартира свободна</p>';
-                } else {
-                    list.innerHTML = residentsInApartment.map(resident => `
-                        <div class="apartment-resident-card">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <img src="${resident.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNlOWVjZWYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwOSAxNC4yMDkxIDQgMTIgNEM5Ljc5MDg2IDQgOCA1Ljc5MDkgOCA4QzggMTAuMjA5MSA5Ljc5MDg2IDEyIDEyIDEyWiIgZmlsbD0iIzZjNzU3ZCIvPgo8cGF0aCBkPSJNMTIgMTRDOS4zMyAxMy45OSA3LjAxIDE1LjYyIDYgMThIMThDMTYuOTkgMTUuNjIgMTQuNjcgMTMuOTkgMTIgMTRaIiBmaWxsPSIjNmM3NTdkIi8+Cjwvc3ZnPgo8L3N2Zz4K'}" 
-                                     alt="Фото" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                                <div>
-                                    <h4 style="margin: 0; color: #2c3e50;">${resident.firstName} ${resident.lastName} ${resident.marked ? '⭐' : ''}</h4>
-                                    ${resident.phone ? `<p style="margin: 2px 0; color: #6c757d;">📞 ${resident.phone}</p>` : ''}
-                                    <p style="margin: 2px 0; color: #6c757d;">📅 Заселен: ${resident.checkInDate}</p>
-                                </div>
-                            </div>
-                            <div class="resident-actions">
-                                <button class="btn ${resident.marked ? 'btn-warning' : 'btn-star'}" onclick="cottageManager.toggleMark(${resident.id}); closeApartmentModal(); cottageManager.showApartmentResidents('${houseId}', '${apartmentNumber}')" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                    ${resident.marked ? '★ Отмечен' : '☆ Отметить'}
-                                </button>
-                                <button class="btn btn-warning" onclick="cottageManager.editResident(${resident.id}); closeApartmentModal()" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                    ✏️ Изменить
-                                </button>
-                                <button class="btn btn-danger" onclick="cottageManager.removeResident(${resident.id}); closeApartmentModal(); cottageManager.showApartmentResidents('${houseId}', '${apartmentNumber}')" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                    🚪 Выселить
-                                </button>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-                
-                modal.style.display = 'flex';
-            }
-            
-            updateStats() {
-                const activeResidents = this.residents.filter(r => r.status === 'active');
-                const occupiedUnits = new Set(activeResidents.map(r => `${r.houseId}-${r.apartment}`)).size;
-                
-                const totalUnits = this.houses.reduce((sum, house) => sum + house.totalApartments, 0);
-                const freeUnits = totalUnits - occupiedUnits;
-                
-                document.getElementById('totalResidents').textContent = this.residents.length;
-                document.getElementById('activeResidents').textContent = activeResidents.length;
-                document.getElementById('occupiedUnits').textContent = occupiedUnits;
-                document.getElementById('freeUnits').textContent = freeUnits;
-            }
-            
-            clearForm() {
-                document.getElementById('residentForm').reset();
-                document.getElementById('photoPreview').style.display = 'none';
-                document.getElementById('photoText').textContent = '📷 Нажмите для выбора фото';
-                document.getElementById('apartment').innerHTML = '<option value="">Сначала выберите дом</option>';
-            }
-            
-            saveData() {
-                localStorage.setItem('cottageResidents', JSON.stringify(this.residents));
-            }
-        }
-
-        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.tab').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            document.getElementById(tabName + '-tab').classList.add('active');
-            event.target.classList.add('active');
-            
-            if (tabName === 'cottages') {
-                cottageManager.displayHouses();
-            }
-        }
-        
-        function closeApartmentModal() {
-            document.getElementById('apartmentModal').style.display = 'none';
-        }
-        
-        function toggleForm() {
-            const formSection = document.getElementById('registrationForm');
-            const toggleBtn = document.querySelector('.toggle-form');
-            
-            cottageManager.isFormCollapsed = !cottageManager.isFormCollapsed;
-            
-            if (cottageManager.isFormCollapsed) {
-                formSection.classList.add('collapsed');
-                toggleBtn.classList.add('collapsed');
-            } else {
-                formSection.classList.remove('collapsed');
-                toggleBtn.classList.remove('collapsed');
-            }
-        }
-        
-        window.onclick = function(event) {
-            const modal = document.getElementById('apartmentModal');
-            if (event.target === modal) {
-                closeApartmentModal();
-            }
-        }
-        
-        function clearForm() {
-            cottageManager.clearForm();
-        }
-        
-        function exportData() {
-            const data = {
-                residents: cottageManager.residents,
-                houses: cottageManager.houses,
-                exportDate: new Date().toISOString(),
-                version: '3.0'
-            };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `cottage_residents_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            alert('✅ Данные экспортированы!');
-        }
-        
-        function importData(event) {
-            const file = event.target.files[0];
-            if (file) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = function(e) {
                     try {
                         const data = JSON.parse(e.target.result);
-                        
-                        if (Array.isArray(data)) {
-                            cottageManager.residents = data;
-                        } else if (data.residents) {
-                            cottageManager.residents = data.residents;
+                        if (data.residents && Array.isArray(data.residents)) {
+                            residents = data.residents;
+                            saveData();
+                            updateInterface();
+                            alert(`✅ Импортировано ${residents.length} жильцов`);
+                        } else {
+                            alert('❌ Неверный формат файла');
                         }
-                        
-                        cottageManager.saveData();
-                        cottageManager.displayResidents();
-                        cottageManager.displayHouses();
-                        cottageManager.updateStats();
-                        alert('✅ Данные успешно импортированы!');
                     } catch (error) {
-                        alert('❌ Ошибка при импорте данных!');
+                        alert('❌ Ошибка при импорте данных: ' + error.message);
                     }
                 };
                 reader.readAsText(file);
-            }
-        }
-        
-        function printReport() {
-            window.print();
-        }
-        
-        function generateOccupancyReport() {
-            const activeResidents = cottageManager.residents.filter(r => r.status === 'active');
-            const occupiedUnits = new Set(activeResidents.map(r => `${r.houseId}-${r.apartment}`)).size;
-            const totalUnits = cottageManager.houses.reduce((sum, house) => sum + house.totalApartments, 0);
-            const occupancyRate = ((occupiedUnits / totalUnits) * 100).toFixed(1);
+            };
             
-            const reportContent = document.getElementById('reportContent');
-            reportContent.innerHTML = `
-                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                    <h3>📈 Отчет по заполненности</h3>
-                    <p><strong>Дата:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
-                    <p><strong>Общее количество квартир:</strong> ${totalUnits}</p>
-                    <p><strong>Занято квартир:</strong> ${occupiedUnits}</p>
-                    <p><strong>Свободно квартир:</strong> ${totalUnits - occupiedUnits}</p>
-                    <p><strong>Процент заполненности:</strong> ${occupancyRate}%</p>
-                    
-                    <h4 style="margin-top: 20px;">Распределение по домам:</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
-                        ${cottageManager.houses.map(house => {
-                            const houseResidents = activeResidents.filter(r => r.houseId === house.id);
-                            const occupiedApartments = new Set(houseResidents.map(r => r.apartment)).size;
-                            return `
-                                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; text-align: center;">
-                                    <strong>${house.name}</strong><br>
-                                    ${occupiedApartments}/${house.totalApartments} квартир<br>
-                                    ${houseResidents.length} жильцов
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
+            input.click();
         }
-        
-        function generateFinancialReport() {
-            const activeResidents = cottageManager.residents.filter(r => r.status === 'active');
-            const pricePerMonth = 25000;
-            const monthlyIncome = activeResidents.length * pricePerMonth;
-            
-            const reportContent = document.getElementById('reportContent');
-            reportContent.innerHTML = `
-                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                    <h3>💰 Финансовый отчет</h3>
-                    <p><strong>Дата:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
-                    <p><strong>Активных жильцов:</strong> ${activeResidents.length}</p>
-                    <p><strong>Стоимость за квартиру в месяц:</strong> ${pricePerMonth.toLocaleString('ru-RU')} ₽</p>
-                    <p><strong>Ожидаемый доход в месяц:</strong> ${monthlyIncome.toLocaleString('ru-RU')} ₽</p>
-                    <p><strong>Ожидаемый доход в год:</strong> ${(monthlyIncome * 12).toLocaleString('ru-RU')} ₽</p>
-                </div>
-            `;
-        }
-        
-        function generateResidentsList() {
-            const activeResidents = cottageManager.residents.filter(r => r.status === 'active');
-            
-            const reportContent = document.getElementById('reportContent');
-            reportContent.innerHTML = `
-                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                    <h3>📋 Список активных жильцов</h3>
-                    <p><strong>Дата:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
-                    <p><strong>Всего жильцов:</strong> ${activeResidents.length}</p>
-                    
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                        <thead>
-                            <tr style="background: #f8f9fa;">
-                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">№</th>
-                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">ФИО</th>
-                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Телефон</th>
-                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Адрес</th>
-                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Дата заселения</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${activeResidents.map((resident, index) => {
-                                const houseName = cottageManager.getHouseName(resident.houseId);
-                                const house = cottageManager.houses.find(h => h.id === resident.houseId);
-                                const apartmentText = house ? cottageManager.getApartmentText(resident.apartment, house) : `кв. ${resident.apartment}`;
-                                return `
-                                <tr>
-                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${index + 1}</td>
-                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.firstName} ${resident.lastName} ${resident.marked ? '⭐' : ''}</td>
-                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.phone || '-'}</td>
-                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${houseName}, ${apartmentText}</td>
-                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.checkInDate}</td>
-                                </tr>
-                            `}).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        }
-
-        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
-            window.cottageManager = new CottageManagerPro();
-        });
     </script>
 </body>
 </html>
