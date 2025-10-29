@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление коттеджами Pro - Автор Ахтем</title>
+    <style>
+        /* Стили для окна входа */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-container h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .login-container p {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-error {
+            color: #e53e3e;
+            background: #fed7d7;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        /* Основные стили приложения */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: none;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .header-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-header {
+            padding: 8px 15px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-header:hover {
+            background: white;
+            color: #2c3e50;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #2c3e50;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            height: fit-content;
+            transition: all 0.3s ease;
+        }
+        
+        .form-section.collapsed {
+            padding: 15px;
+        }
+        
+        .form-section.collapsed .form-content {
+            display: none;
+        }
+        
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .form-header h2 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin: 0;
+        }
+        
+        .toggle-form {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-form.collapsed {
+            transform: rotate(180deg);
+        }
+        
+        .form-content {
+            transition: all 0.3s ease;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .photo-upload {
+            position: relative;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .photo-upload:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .photo-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .photo-preview {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: none;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+        
+        .btn-star {
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            color: white;
+        }
+        
+        .btn-star:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .search-section {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            min-width: 200px;
+        }
+        
+        .filter-select {
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            min-width: 150px;
+        }
+        
+        .residents-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .house-section {
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .house-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .house-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        
+        .house-count {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        
+        .house-residents {
+            display: none;
+            padding: 0;
+        }
+        
+        .house-residents.expanded {
+            display: block;
+        }
+        
+        .resident-card {
+            background: white;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+        
+        .resident-card.marked {
+            border-left: 4px solid #ffd700;
+            background: #fff9e6;
+        }
+        
+        .resident-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .resident-info {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .resident-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #667eea;
+        }
+        
+        .resident-details h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .resident-details p {
+            color: #6c757d;
+            margin: 2px 0;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .cottage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .cottage-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 2px solid #e9ecef;
+        }
+        
+        .cottage-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .apartment-grid {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .floor-section {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .floor-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #495057;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+        }
+        
+        .floor-apartments {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 5px;
+        }
+        
+        .apartment {
+            padding: 8px 5px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .apartment:hover {
+            transform: scale(1.05);
+        }
+        
+        .apartment.free {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .apartment.occupied {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .reports-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .report-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 15px;
+        }
+        
+        .modal-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .apartment-residents-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .apartment-resident-card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .resident-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .resident-actions .btn {
+            padding: 6px 10px;
+            font-size: 11px;
+            margin: 2px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .resident-info {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .header-actions {
+                position: static;
+                margin-top: 20px;
+                justify-content: center;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .search-section {
+                flex-direction: column;
+            }
+            
+            .resident-actions {
+                justify-content: center;
+            }
+            
+            .cottage-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Окно ввода пароля -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-container">
+            <h2>🔐 Доступ к системе</h2>
+            <p>Управление коттеджами Pro</p>
+            <p><strong>Автор: Ахтем</strong></p>
+            
+            <div class="login-error" id="loginError">
+                ❌ Неверный пароль!
+            </div>
+            
+            <input type="password" 
+                   class="login-input" 
+                   id="passwordInput" 
+                   placeholder="Введите пароль для доступа"
+                   onkeypress="handlePasswordEnter(event)">
+            
+            <button class="btn btn-primary" onclick="checkPassword()" style="width: 100%;">
+                🔑 Войти в систему
+            </button>
+            
+            <div style="margin-top: 20px; font-size: 12px; color: #6c757d;">
+                Для получения доступа обратитесь к администратору
+            </div>
+        </div>
+    </div>
+
+    <!-- Основное приложение -->
+    <div class="container" id="mainApp">
+        <div class="header">
+            <div class="header-actions">
+                <button class="btn-header" onclick="exportData()">📥 Экспорт</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                <button class="btn-header" onclick="document.getElementById('importFile').click()">📤 Импорт</button>
+                <button class="btn-header" onclick="printReport()">🖨️ Печать</button>
+                <button class="btn-header" onclick="logout()" style="background: #e53e3e;">🚪 Выход</button>
+            </div>
+            <h1>🏘️ Управление коттеджами Pro</h1>
+            <p>Система заселения и выселения жильцов</p>
+            <p><strong>Автор: Ахтем</strong></p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('residents')">👥 Жильцы</button>
+            <button class="tab" onclick="showTab('cottages')">🏠 Дома</button>
+            <button class="tab" onclick="showTab('reports')">📊 Отчеты</button>
+        </div>
+        
+        <!-- Вкладка Жильцы -->
+        <div id="residents-tab" class="tab-content active">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalResidents">0</div>
+                    <div class="stat-label">Всего жильцов</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeResidents">0</div>
+                    <div class="stat-label">Активных жильцов</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="occupiedUnits">0</div>
+                    <div class="stat-label">Занято квартир</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="freeUnits">134</div>
+                    <div class="stat-label">Свободно квартир</div>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="form-section" id="registrationForm">
+                    <div class="form-header" onclick="toggleForm()">
+                        <h2>📝 Регистрация жильца</h2>
+                        <button class="toggle-form">▼</button>
+                    </div>
+                    <div class="form-content">
+                        <form id="residentForm">
+                            <div class="form-group">
+                                <label for="firstName">Имя:</label>
+                                <input type="text" id="firstName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="lastName">Фамилия:</label>
+                                <input type="text" id="lastName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">Телефон:</label>
+                                <input type="tel" id="phone" placeholder="+7 (999) 123-45-67">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="house">Дом:</label>
+                                <select id="house" required>
+                                    <option value="">Выберите дом</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="apartment">Квартира:</label>
+                                <select id="apartment" required>
+                                    <option value="">Сначала выберите дом</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="notes">Примечания:</label>
+                                <textarea id="notes" rows="3" placeholder="Дополнительная информация..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Фото жильца:</label>
+                                <div class="photo-upload" onclick="document.getElementById('photo').click()">
+                                    <input type="file" id="photo" accept="image/*">
+                                    <div id="photoText">📷 Нажмите для выбора фото</div>
+                                    <img id="photoPreview" class="photo-preview" alt="Предпросмотр">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">✅ Заселить</button>
+                            <button type="button" class="btn btn-danger" onclick="clearForm()">🗑️ Очистить</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="search-section">
+                        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Поиск по имени, фамилии...">
+                        <select id="houseFilter" class="filter-select">
+                            <option value="">Все дома</option>
+                        </select>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">Все статусы</option>
+                            <option value="active">Активные</option>
+                            <option value="inactive">Выселенные</option>
+                        </select>
+                        <button class="btn btn-star" onclick="cottageManager.toggleMarkedOnly();">
+                            ⭐ Отмеченные
+                        </button>
+                    </div>
+                    
+                    <div class="residents-container" id="residentsContainer">
+                        <!-- Жильцы будут сгруппированы по домам -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка Дома -->
+        <div id="cottages-tab" class="tab-content">
+            <h2>🏠 Обзор домов</h2>
+            <div class="cottage-grid" id="cottageGrid">
+                <!-- Дома будут добавлены динамически -->
+            </div>
+        </div>
+        
+        <!-- Вкладка Отчеты -->
+        <div id="reports-tab" class="tab-content">
+            <div class="reports-section">
+                <h2>📊 Отчеты и аналитика</h2>
+                <div class="report-buttons">
+                    <button class="btn btn-success" onclick="generateOccupancyReport()">📈 Отчет по заполненности</button>
+                    <button class="btn btn-warning" onclick="generateFinancialReport()">💰 Финансовый отчет</button>
+                    <button class="btn btn-primary" onclick="generateResidentsList()">📋 Список жильцов</button>
+                </div>
+                <div id="reportContent"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно для списка жильцов квартиры -->
+    <div id="apartmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="apartmentModalTitle">Жильцы квартиры</h3>
+                <button class="close-modal" onclick="closeApartmentModal()">×</button>
+            </div>
+            <div id="apartmentResidentsList" class="apartment-residents-list">
+                <!-- Список жильцов будет добавлен динамически -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== СИСТЕМА АУТЕНТИФИКАЦИИ ====================
+        const APP_PASSWORD = "admin123"; // ПАРОЛЬ - МОЖЕШЬ ИЗМЕНИТЬ
+        const SESSION_KEY = "cottage_auth";
+        
+        function checkAuth() {
+            const savedAuth = sessionStorage.getItem(SESSION_KEY);
+            if (savedAuth === APP_PASSWORD) {
+                showMainApp();
+            } else {
+                showLogin();
+            }
+        }
+        
+        function showLogin() {
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('passwordInput').focus();
+        }
+        
+        function showMainApp() {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+        }
+        
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const errorDiv = document.getElementById('loginError');
+            
+            if (passwordInput.value === APP_PASSWORD) {
+                sessionStorage.setItem(SESSION_KEY, APP_PASSWORD);
+                showMainApp();
+                if (typeof cottageManager !== 'undefined') {
+                    cottageManager.init();
+                }
+            } else {
+                errorDiv.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        function handlePasswordEnter(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        }
+        
+        function logout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                sessionStorage.removeItem(SESSION_KEY);
+                location.reload();
+            }
+        }
+
+        // ==================== ОСНОВНОЙ КОД ПРИЛОЖЕНИЯ ====================
+        class CottageManagerPro {
+            constructor() {
+                this.residents = JSON.parse(localStorage.getItem('cottageResidents')) || [];
+                this.showMarkedOnly = false;
+                this.expandedHouses = new Set();
+                this.isFormCollapsed = false;
+                
+                this.houses = [
+                    { 
+                        id: 'house-9', 
+                        name: 'Дом 9', 
+                        floors: 3, 
+                        apartmentsPerFloor: 11, 
+                        totalApartments: 33,
+                        apartmentNumbers: this.generateApartmentNumbers(3, 11)
+                    },
+                    { 
+                        id: 'house-9A', 
+                        name: 'Дом 9А', 
+                        floors: 3, 
+                        apartmentsPerFloor: 11, 
+                        totalApartments: 33,
+                        apartmentNumbers: this.generateApartmentNumbers(3, 11)
+                    },
+                    { 
+                        id: 'house-8', 
+                        name: 'Дом 8', 
+                        floors: 3, 
+                        apartmentsPerFloor: 11, 
+                        totalApartments: 33,
+                        apartmentNumbers: this.generateApartmentNumbers(3, 11)
+                    },
+                    { 
+                        id: 'house-8A', 
+                        name: 'Дом 8А', 
+                        floors: 2, 
+                        apartmentsPerFloor: 1, 
+                        totalApartments: 2,
+                        apartmentNumbers: this.generateApartmentNumbers(2, 1)
+                    },
+                    ...Array.from({length: 15}, (_, i) => ({
+                        id: `cottage-${i + 1}`,
+                        name: `Коттедж ${i + 1}`,
+                        floors: 2,
+                        apartmentsPerFloor: 2,
+                        totalApartments: 4,
+                        apartmentNumbers: this.generateApartmentNumbers(2, 2)
+                    }))
+                ];
+            }
+            
+            generateApartmentNumbers(floors, apartmentsPerFloor) {
+                const numbers = [];
+                let counter = 1;
+                for (let floor = 1; floor <= floors; floor++) {
+                    for (let apt = 1; apt <= apartmentsPerFloor; apt++) {
+                        numbers.push({
+                            floor: floor,
+                            number: counter.toString(),
+                            display: `${floor} этаж, кв. ${counter}`
+                        });
+                        counter++;
+                    }
+                }
+                return numbers;
+            }
+            
+            init() {
+                this.setupHouseOptions();
+                this.setupHouseFilter();
+                this.setupEventListeners();
+                this.displayResidents();
+                this.displayHouses();
+                this.updateStats();
+            }
+            
+            setupHouseOptions() {
+                const houseSelect = document.getElementById('house');
+                houseSelect.innerHTML = '<option value="">Выберите дом</option>';
+                this.houses.forEach(house => {
+                    const option = document.createElement('option');
+                    option.value = house.id;
+                    option.textContent = house.name;
+                    houseSelect.appendChild(option);
+                });
+            }
+            
+            setupHouseFilter() {
+                const houseFilter = document.getElementById('houseFilter');
+                houseFilter.innerHTML = '<option value="">Все дома</option>';
+                this.houses.forEach(house => {
+                    const option = document.createElement('option');
+                    option.value = house.id;
+                    option.textContent = house.name;
+                    houseFilter.appendChild(option);
+                });
+            }
+            
+            setupEventListeners() {
+                document.getElementById('house').addEventListener('change', (e) => {
+                    this.updateApartmentOptions(e.target.value);
+                });
+                
+                document.getElementById('residentForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addResident();
+                });
+                
+                document.getElementById('photo').addEventListener('change', (e) => {
+                    this.handlePhotoUpload(e);
+                });
+                
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    this.searchResidents();
+                });
+                
+                document.getElementById('statusFilter').addEventListener('change', (e) => {
+                    this.searchResidents();
+                });
+                
+                document.getElementById('houseFilter').addEventListener('change', (e) => {
+                    this.searchResidents();
+                });
+            }
+            
+            updateApartmentOptions(houseId) {
+                const apartmentSelect = document.getElementById('apartment');
+                apartmentSelect.innerHTML = '<option value="">Выберите квартиру</option>';
+                
+                if (!houseId) return;
+                
+                const house = this.houses.find(h => h.id === houseId);
+                if (!house) return;
+                
+                house.apartmentNumbers.forEach(apt => {
+                    const option = document.createElement('option');
+                    option.value = apt.number;
+                    option.textContent = apt.display;
+                    
+                    const residentsCount = this.residents.filter(r => 
+                        r.houseId == houseId && r.apartment == apt.number && r.status === 'active'
+                    ).length;
+                    
+                    if (residentsCount > 0) {
+                        option.textContent += ` (${residentsCount} чел.)`;
+                    }
+                    
+                    apartmentSelect.appendChild(option);
+                });
+            }
+            
+            handlePhotoUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const preview = document.getElementById('photoPreview');
+                        const text = document.getElementById('photoText');
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        text.textContent = 'Фото выбрано ✅';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+            
+            addResident() {
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const houseId = document.getElementById('house').value;
+                const apartment = document.getElementById('apartment').value;
+                const notes = document.getElementById('notes').value.trim();
+                const photoFile = document.getElementById('photo').files[0];
+                
+                if (!firstName || !lastName || !houseId || !apartment) {
+                    alert('❌ Пожалуйста, заполните обязательные поля!');
+                    return;
+                }
+                
+                const house = this.houses.find(h => h.id === houseId);
+                if (!house) {
+                    alert('❌ Выбран неверный дом!');
+                    return;
+                }
+                
+                const resident = {
+                    id: Date.now(),
+                    firstName,
+                    lastName,
+                    phone,
+                    houseId: houseId,
+                    apartment,
+                    notes,
+                    photo: photoFile ? document.getElementById('photoPreview').src : null,
+                    checkInDate: new Date().toLocaleDateString('ru-RU'),
+                    checkInTime: new Date().toLocaleTimeString('ru-RU'),
+                    status: 'active',
+                    marked: false
+                };
+                
+                this.residents.push(resident);
+                this.saveData();
+                this.displayResidents();
+                this.displayHouses();
+                this.updateStats();
+                this.clearForm();
+                
+                alert(`✅ ${firstName} ${lastName} успешно заселен в ${house.name}, квартиру ${apartment}!`);
+            }
+            
+            getApartmentText(apartment, house = null) {
+                if (!house) {
+                    house = this.houses.find(h => h.id === houseId);
+                }
+                const aptInfo = house.apartmentNumbers.find(a => a.number === apartment);
+                return aptInfo ? aptInfo.display : `кв. ${apartment}`;
+            }
+            
+            getHouseName(houseId) {
+                const house = this.houses.find(h => h.id === houseId);
+                return house ? house.name : `Дом ${houseId}`;
+            }
+            
+            toggleMark(id) {
+                const resident = this.residents.find(r => r.id === id);
+                if (resident) {
+                    resident.marked = !resident.marked;
+                    this.saveData();
+                    this.displayResidents();
+                }
+            }
+            
+            toggleMarkedOnly() {
+                this.showMarkedOnly = !this.showMarkedOnly;
+                this.searchResidents();
+                
+                const btn = document.querySelector('.btn-star');
+                if (this.showMarkedOnly) {
+                    btn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)';
+                    btn.innerHTML = '⭐ Показать всех';
+                } else {
+                    btn.style.background = 'linear-gradient(135deg, #ffd700 0%, #ffa500 100%)';
+                    btn.innerHTML = '⭐ Только отмеченные';
+                }
+            }
+            
+            toggleHouseExpansion(houseId) {
+                if (this.expandedHouses.has(houseId)) {
+                    this.expandedHouses.delete(houseId);
+                } else {
+                    this.expandedHouses.add(houseId);
+                }
+                this.displayResidents();
+            }
+            
+            removeResident(id) {
+                const resident = this.residents.find(r => r.id === id);
+                if (resident && confirm(`❓ Выселить ${resident.firstName} ${resident.lastName}?`)) {
+                    resident.status = 'inactive';
+                    resident.checkOutDate = new Date().toLocaleDateString('ru-RU');
+                    resident.checkOutTime = new Date().toLocaleTimeString('ru-RU');
+                    
+                    this.saveData();
+                    this.displayResidents();
+                    this.displayHouses();
+                    this.updateStats();
+                    
+                    alert(`✅ ${resident.firstName} ${resident.lastName} выселен!`);
+                }
+            }
+            
+            deleteResident(id) {
+                const resident = this.residents.find(r => r.id === id);
+                if (resident && confirm(`⚠️ ВНИМАНИЕ! Вы хотите ПОЛНОСТЬЮ УДАЛИТЬ ${resident.firstName} ${resident.lastName} из базы данных?\n\nЭто действие нельзя отменить!`)) {
+                    this.residents = this.residents.filter(r => r.id !== id);
+                    
+                    this.saveData();
+                    this.displayResidents();
+                    this.displayHouses();
+                    this.updateStats();
+                    
+                    alert(`🗑️ ${resident.firstName} ${resident.lastName} полностью удален из базы данных!`);
+                }
+            }
+            
+            editResident(id) {
+                const resident = this.residents.find(r => r.id === id);
+                if (!resident) return;
+                
+                document.getElementById('firstName').value = resident.firstName;
+                document.getElementById('lastName').value = resident.lastName;
+                document.getElementById('phone').value = resident.phone || '';
+                document.getElementById('house').value = resident.houseId;
+                document.getElementById('notes').value = resident.notes || '';
+                
+                this.updateApartmentOptions(resident.houseId);
+                setTimeout(() => {
+                    document.getElementById('apartment').value = resident.apartment;
+                }, 100);
+                
+                if (resident.photo) {
+                    document.getElementById('photoPreview').src = resident.photo;
+                    document.getElementById('photoPreview').style.display = 'block';
+                    document.getElementById('photoText').textContent = 'Фото загружено ✅';
+                }
+                
+                this.residents = this.residents.filter(r => r.id !== id);
+                this.saveData();
+                this.displayResidents();
+                this.displayHouses();
+                this.updateStats();
+                
+                alert('📝 Данные загружены для редактирования. Внесите изменения и нажмите "Заселить".');
+            }
+            
+            searchResidents() {
+                const query = document.getElementById('searchInput').value.toLowerCase();
+                const statusFilter = document.getElementById('statusFilter').value;
+                const houseFilter = document.getElementById('houseFilter').value;
+                
+                let filtered = this.residents.filter(resident => {
+                    const fullName = `${resident.firstName} ${resident.lastName}`.toLowerCase();
+                    const phone = (resident.phone || '').toLowerCase();
+                    const notes = (resident.notes || '').toLowerCase();
+                    
+                    const matchesQuery = !query || fullName.includes(query) || phone.includes(query) || notes.includes(query);
+                    const matchesStatus = !statusFilter || resident.status === statusFilter;
+                    const matchesHouse = !houseFilter || resident.houseId === houseFilter;
+                    const matchesMarked = !this.showMarkedOnly || resident.marked;
+                    
+                    return matchesQuery && matchesStatus && matchesHouse && matchesMarked;
+                });
+                
+                filtered.sort((a, b) => b.id - a.id);
+                this.displayResidents(filtered);
+            }
+            
+            displayResidents(residentsToShow = null) {
+                const container = document.getElementById('residentsContainer');
+                const residents = residentsToShow || this.residents;
+                
+                const residentsByHouse = {};
+                this.houses.forEach(house => {
+                    residentsByHouse[house.id] = residents.filter(r => r.houseId === house.id);
+                });
+                
+                let hasResidents = false;
+                let html = '';
+                
+                const markedResidents = residents.filter(r => r.marked);
+                if (markedResidents.length > 0) {
+                    hasResidents = true;
+                    const isExpanded = this.expandedHouses.has('marked');
+                    html += `
+                        <div class="house-section">
+                            <div class="house-header" onclick="cottageManager.toggleHouseExpansion('marked')" style="background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);">
+                                <h3>⭐ Отмеченные жильцы</h3>
+                                <div class="house-count">${markedResidents.length} жильцов</div>
+                            </div>
+                            <div class="house-residents ${isExpanded ? 'expanded' : ''}">
+                                ${markedResidents.map(resident => {
+                                    const houseName = this.getHouseName(resident.houseId);
+                                    const house = this.houses.find(h => h.id === resident.houseId);
+                                    const apartmentText = house ? this.getApartmentText(resident.apartment, house) : `кв. ${resident.apartment}`;
+                                    return `
+                                    <div class="resident-card marked">
+                                        <div class="resident-info">
+                                            <img src="${resident.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNlOWVjZWYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxOCIgeT0iMTgiPgo8cGF0aCBkPSJNMTIgMTJDMTQuMjA5MSAxMiAxNiAxMC4yMDkxIDE2IDhDMTYgNS43OTA5IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwOSA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxNEM5LjMzIDEzLjk5IDcuMDEgMTUuNjIgNiAxOEgxOEMxNi45OSAxNS42MiAxNC42NyAxMy45OSAxMiAxNFoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPgo='}" 
+                                                     alt="Фото" class="resident-photo">
+                                            <div class="resident-details">
+                                                <h3>${resident.firstName} ${resident.lastName} ⭐</h3>
+                                                <p>📍 ${houseName}, ${apartmentText}</p>
+                                                ${resident.phone ? `<p>📞 ${resident.phone}</p>` : ''}
+                                                <p>📅 Заселен: ${resident.checkInDate} ${resident.checkInTime}</p>
+                                                ${resident.checkOutDate ? `<p>📅 Выселен: ${resident.checkOutDate} ${resident.checkOutTime}</p>` : ''}
+                                                ${resident.notes ? `<p>📝 ${resident.notes}</p>` : ''}
+                                            </div>
+                                            <div>
+                                                <div class="status-badge ${resident.status === 'active' ? 'status-active' : 'status-inactive'}">
+                                                    ${resident.status === 'active' ? '🟢 Проживает' : '🔴 Выселен'}
+                                                </div>
+                                                <div class="resident-actions">
+                                                    <button class="btn btn-warning" onclick="cottageManager.toggleMark(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                                        ★ Отмечен
+                                                    </button>
+                                                    ${resident.status === 'active' ? 
+                                                        `<button class="btn btn-warning" onclick="cottageManager.editResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                                            ✏️ Изменить
+                                                        </button>
+                                                        <button class="btn btn-danger" onclick="cottageManager.removeResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                                            🚪 Выселить
+                                                        </button>` : ''
+                                                    }
+                                                    <button class="btn" onclick="cottageManager.deleteResident(${resident.id})" style="background: #6c757d; color: white; padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                                        🗑️ Удалить
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `}).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                this.houses.forEach(house => {
+                    const houseResidents = residentsByHouse[house.id].filter(r => !r.marked);
+                    if (houseResidents.length === 0) return;
+                    
+                    hasResidents = true;
+                    const isExpanded = this.expandedHouses.has(house.id);
+                    const activeCount = houseResidents.filter(r => r.status === 'active').length;
+                    const totalCount = houseResidents.length;
+                    
+                    html += `
+                        <div class="house-section">
+                            <div class="house-header" onclick="cottageManager.toggleHouseExpansion('${house.id}')">
+                                <h3>${house.name.includes('Дом') ? '🏢' : '🏠'} ${house.name}</h3>
+                                <div class="house-count">${activeCount}/${totalCount} жильцов</div>
+                            </div>
+                            <div class="house-residents ${isExpanded ? 'expanded' : ''}">
+                                ${houseResidents.map(resident => {
+                                    const apartmentText = this.getApartmentText(resident.apartment, house);
+                                    return `
+                                    <div class="resident-card">
+                                        <div class="resident-info">
+                                            <img src="${resident.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNlOWVjZWYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxOCIgeT0iMTgiPgo8cGF0aCBkPSJNMTIgMTJDMTQuMjA5MSAxMiAxNiAxMC4yMDkxIDE2IDhDMTYgNS43OTA5IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwOSA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxNEM5LjMzIDEzLjk5IDcuMDEgMTUuNjIgNiAxOEgxOEMxNi45OSAxNS42MiAxNC42NyAxMy45OSAxMiAxNFoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPgo='}" 
+                                                     alt="Фото" class="resident-photo">
+                                            <div class="resident-details">
+                                                <h3>${resident.firstName} ${resident.lastName}</h3>
+                                                <p>📍 ${apartmentText}</p>
+                                                ${resident.phone ? `<p>📞 ${resident.phone}</p>` : ''}
+                                                <p>📅 Заселен: ${resident.checkInDate} ${resident.checkInTime}</p>
+                                                ${resident.checkOutDate ? `<p>📅 Выселен: ${resident.checkOutDate} ${resident.checkOutTime}</p>` : ''}
+                                                ${resident.notes ? `<p>📝 ${resident.notes}</p>` : ''}
+                                            </div>
+                                            <div>
+                                                <div class="status-badge ${resident.status === 'active' ? 'status-active' : 'status-inactive'}">
+                                                    ${resident.status === 'active' ? '🟢 Проживает' : '🔴 Выселен'}
+                                                </div>
+                                                <div class="resident-actions">
+                                                    <button class="btn btn-star" onclick="cottageManager.toggleMark(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                                        ☆ Отметить
+                                                    </button>
+                                                    ${resident.status === 'active' ? 
+                                                        `<button class="btn btn-warning" onclick="cottageManager.editResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                                            ✏️ Изменить
+                                                        </button>
+                                                        <button class="btn btn-danger" onclick="cottageManager.removeResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                                            🚪 Выселить
+                                                        </button>` : ''
+                                                    }
+                                                    <button class="btn" onclick="cottageManager.deleteResident(${resident.id})" style="background: #6c757d; color: white; padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                                        🗑️ Удалить
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `}).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                if (!hasResidents) {
+                    html = `
+                        <div class="empty-state">
+                            <h3>Жильцы не найдены</h3>
+                            <p>Добавьте первого жильца или измените фильтры</p>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = html;
+            }
+            
+            displayHouses() {
+                const container = document.getElementById('cottageGrid');
+                
+                container.innerHTML = this.houses.map(house => {
+                    const houseResidents = this.residents.filter(r => r.houseId === house.id && r.status === 'active');
+                    const occupiedApartments = new Set(houseResidents.map(r => r.apartment)).size;
+                    
+                    const floors = [];
+                    let currentFloor = 1;
+                    let apartmentsInCurrentFloor = [];
+                    
+                    house.apartmentNumbers.forEach((apt, index) => {
+                        if (apt.floor !== currentFloor && apartmentsInCurrentFloor.length > 0) {
+                            floors.push({
+                                number: currentFloor,
+                                apartments: [...apartmentsInCurrentFloor]
+                            });
+                            apartmentsInCurrentFloor = [];
+                            currentFloor = apt.floor;
+                        }
+                        
+                        const residents = houseResidents.filter(r => r.apartment === apt.number);
+                        apartmentsInCurrentFloor.push({
+                            number: apt.number,
+                            residents,
+                            occupied: residents.length > 0
+                        });
+                        
+                        if (index === house.apartmentNumbers.length - 1) {
+                            floors.push({
+                                number: currentFloor,
+                                apartments: [...apartmentsInCurrentFloor]
+                            });
+                        }
+                    });
+                    
+                    return `
+                        <div class="cottage-card">
+                            <h3>${house.name.includes('Дом') ? '🏢' : '🏠'} ${house.name}</h3>
+                            <p style="text-align: center; margin-bottom: 15px; color: #6c757d;">
+                                Заполненность: ${occupiedApartments}/${house.totalApartments}
+                            </p>
+                            <div class="apartment-grid">
+                                ${floors.map(floor => `
+                                    <div class="floor-section">
+                                        <div class="floor-title">${floor.number} этаж</div>
+                                        <div class="floor-apartments" style="grid-template-columns: repeat(${Math.min(house.apartmentsPerFloor, 11)}, 1fr);">
+                                            ${floor.apartments.map(apt => `
+                                                <div class="apartment ${apt.occupied ? 'occupied' : 'free'}" 
+                                                     onclick="cottageManager.showApartmentResidents('${house.id}', '${apt.number}')"
+                                                     title="Кликните для просмотра жильцов">
+                                                    ${house.apartmentsPerFloor > 1 ? `Кв.${apt.number}` : 'Кв.'}
+                                                    ${apt.occupied ? `👤` : '🏠'}
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            showApartmentResidents(houseId, apartmentNumber) {
+                const residentsInApartment = this.residents.filter(r => 
+                    r.houseId === houseId && 
+                    r.apartment === apartmentNumber && 
+                    r.status === 'active'
+                );
+                
+                const modal = document.getElementById('apartmentModal');
+                const title = document.getElementById('apartmentModalTitle');
+                const list = document.getElementById('apartmentResidentsList');
+                
+                const houseName = this.getHouseName(houseId);
+                const house = this.houses.find(h => h.id === houseId);
+                const apartmentText = house ? this.getApartmentText(apartmentNumber, house) : `кв. ${apartmentNumber}`;
+                
+                title.textContent = `Жильцы в ${houseName}, ${apartmentText}`;
+                
+                if (residentsInApartment.length === 0) {
+                    list.innerHTML = '<p style="text-align: center; padding: 20px; color: #6c757d;">Квартира свободна</p>';
+                } else {
+                    list.innerHTML = residentsInApartment.map(resident => `
+                        <div class="apartment-resident-card">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="${resident.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNlOWVjZWYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwOSAxNC4yMDkxIDQgMTIgNEM5Ljc5MDg2IDQgOCA1Ljc5MDkgOCA4QzggMTAuMjA5MSA5Ljc5MDg2IDEyIDEyIDEyWiIgZmlsbD0iIzZjNzU3ZCIvPgo8cGF0aCBkPSJNMTIgMTRDOS4zMyAxMy45OSA3LjAxIDE1LjYyIDYgMThIMThDMTYuOTkgMTUuNjIgMTQuNjcgMTMuOTkgMTIgMTRaIiBmaWxsPSIjNmM3NTdkIi8+Cjwvc3ZnPgo8L3N2Zz4K'}" 
+                                     alt="Фото" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                <div>
+                                    <h4 style="margin: 0; color: #2c3e50;">${resident.firstName} ${resident.lastName} ${resident.marked ? '⭐' : ''}</h4>
+                                    ${resident.phone ? `<p style="margin: 2px 0; color: #6c757d;">📞 ${resident.phone}</p>` : ''}
+                                    <p style="margin: 2px 0; color: #6c757d;">📅 Заселен: ${resident.checkInDate}</p>
+                                </div>
+                            </div>
+                            <div class="resident-actions">
+                                <button class="btn ${resident.marked ? 'btn-warning' : 'btn-star'}" onclick="cottageManager.toggleMark(${resident.id}); closeApartmentModal(); cottageManager.showApartmentResidents('${houseId}', '${apartmentNumber}')" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                    ${resident.marked ? '★ Отмечен' : '☆ Отметить'}
+                                </button>
+                                <button class="btn btn-warning" onclick="cottageManager.editResident(${resident.id}); closeApartmentModal()" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                    ✏️ Изменить
+                                </button>
+                                <button class="btn btn-danger" onclick="cottageManager.removeResident(${resident.id}); closeApartmentModal(); cottageManager.showApartmentResidents('${houseId}', '${apartmentNumber}')" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                    🚪 Выселить
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                modal.style.display = 'flex';
+            }
+            
+            updateStats() {
+                const activeResidents = this.residents.filter(r => r.status === 'active');
+                const occupiedUnits = new Set(activeResidents.map(r => `${r.houseId}-${r.apartment}`)).size;
+                
+                const totalUnits = this.houses.reduce((sum, house) => sum + house.totalApartments, 0);
+                const freeUnits = totalUnits - occupiedUnits;
+                
+                document.getElementById('totalResidents').textContent = this.residents.length;
+                document.getElementById('activeResidents').textContent = activeResidents.length;
+                document.getElementById('occupiedUnits').textContent = occupiedUnits;
+                document.getElementById('freeUnits').textContent = freeUnits;
+            }
+            
+            clearForm() {
+                document.getElementById('residentForm').reset();
+                document.getElementById('photoPreview').style.display = 'none';
+                document.getElementById('photoText').textContent = '📷 Нажмите для выбора фото';
+                document.getElementById('apartment').innerHTML = '<option value="">Сначала выберите дом</option>';
+            }
+            
+            saveData() {
+                localStorage.setItem('cottageResidents', JSON.stringify(this.residents));
+            }
+        }
+
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'cottages') {
+                cottageManager.displayHouses();
+            }
+        }
+        
+        function closeApartmentModal() {
+            document.getElementById('apartmentModal').style.display = 'none';
+        }
+        
+        function toggleForm() {
+            const formSection = document.getElementById('registrationForm');
+            const toggleBtn = document.querySelector('.toggle-form');
+            
+            cottageManager.isFormCollapsed = !cottageManager.isFormCollapsed;
+            
+            if (cottageManager.isFormCollapsed) {
+                formSection.classList.add('collapsed');
+                toggleBtn.classList.add('collapsed');
+            } else {
+                formSection.classList.remove('collapsed');
+                toggleBtn.classList.remove('collapsed');
+            }
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('apartmentModal');
+            if (event.target === modal) {
+                closeApartmentModal();
+            }
+        }
+        
+        function clearForm() {
+            cottageManager.clearForm();
+        }
+        
+        function exportData() {
+            const data = {
+                residents: cottageManager.residents,
+                houses: cottageManager.houses,
+                exportDate: new Date().toISOString(),
+                version: '3.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cottage_residents_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Данные экспортированы!');
+        }
+        
+        function importData(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (Array.isArray(data)) {
+                            cottageManager.residents = data;
+                        } else if (data.residents) {
+                            cottageManager.residents = data.residents;
+                        }
+                        
+                        cottageManager.saveData();
+                        cottageManager.displayResidents();
+                        cottageManager.displayHouses();
+                        cottageManager.updateStats();
+                        alert('✅ Данные успешно импортированы!');
+                    } catch (error) {
+                        alert('❌ Ошибка при импорте данных!');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+        
+        function printReport() {
+            window.print();
+        }
+        
+        function generateOccupancyReport() {
+            const activeResidents = cottageManager.residents.filter(r => r.status === 'active');
+            const occupiedUnits = new Set(activeResidents.map(r => `${r.houseId}-${r.apartment}`)).size;
+            const totalUnits = cottageManager.houses.reduce((sum, house) => sum + house.totalApartments, 0);
+            const occupancyRate = ((occupiedUnits / totalUnits) * 100).toFixed(1);
+            
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3>📈 Отчет по заполненности</h3>
+                    <p><strong>Дата:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
+                    <p><strong>Общее количество квартир:</strong> ${totalUnits}</p>
+                    <p><strong>Занято квартир:</strong> ${occupiedUnits}</p>
+                    <p><strong>Свободно квартир:</strong> ${totalUnits - occupiedUnits}</p>
+                    <p><strong>Процент заполненности:</strong> ${occupancyRate}%</p>
+                    
+                    <h4 style="margin-top: 20px;">Распределение по домам:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+                        ${cottageManager.houses.map(house => {
+                            const houseResidents = activeResidents.filter(r => r.houseId === house.id);
+                            const occupiedApartments = new Set(houseResidents.map(r => r.apartment)).size;
+                            return `
+                                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; text-align: center;">
+                                    <strong>${house.name}</strong><br>
+                                    ${occupiedApartments}/${house.totalApartments} квартир<br>
+                                    ${houseResidents.length} жильцов
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function generateFinancialReport() {
+            const activeResidents = cottageManager.residents.filter(r => r.status === 'active');
+            const pricePerMonth = 25000;
+            const monthlyIncome = activeResidents.length * pricePerMonth;
+            
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3>💰 Финансовый отчет</h3>
+                    <p><strong>Дата:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
+                    <p><strong>Активных жильцов:</strong> ${activeResidents.length}</p>
+                    <p><strong>Стоимость за квартиру в месяц:</strong> ${pricePerMonth.toLocaleString('ru-RU')} ₽</p>
+                    <p><strong>Ожидаемый доход в месяц:</strong> ${monthlyIncome.toLocaleString('ru-RU')} ₽</p>
+                    <p><strong>Ожидаемый доход в год:</strong> ${(monthlyIncome * 12).toLocaleString('ru-RU')} ₽</p>
+                </div>
+            `;
+        }
+        
+        function generateResidentsList() {
+            const activeResidents = cottageManager.residents.filter(r => r.status === 'active');
+            
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3>📋 Список активных жильцов</h3>
+                    <p><strong>Дата:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
+                    <p><strong>Всего жильцов:</strong> ${activeResidents.length}</p>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">№</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">ФИО</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Телефон</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Адрес</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Дата заселения</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${activeResidents.map((resident, index) => {
+                                const houseName = cottageManager.getHouseName(resident.houseId);
+                                const house = cottageManager.houses.find(h => h.id === resident.houseId);
+                                const apartmentText = house ? cottageManager.getApartmentText(resident.apartment, house) : `кв. ${resident.apartment}`;
+                                return `
+                                <tr>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${index + 1}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.firstName} ${resident.lastName} ${resident.marked ? '⭐' : ''}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.phone || '-'}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${houseName}, ${apartmentText}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.checkInDate}</td>
+                                </tr>
+                            `}).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            window.cottageManager = new CottageManagerPro();
+        });
+    </script>
+</body>
+</html>
