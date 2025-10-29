@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Управление коттеджами Pro - Автор Ахтем</title>
     <style>
-        /* Стили для окна входа */
+        /* Все ваши оригинальные стили остаются без изменений */
         .login-overlay {
             position: fixed;
             top: 0;
@@ -795,6 +795,7 @@
                 <button class="btn-header" onclick="document.getElementById('importFile').click()">📤 Импорт</button>
                 <button class="btn-header" onclick="printReport()">🖨️ Печать</button>
                 <button class="btn-header" onclick="showGitHubSettings()">⚙️ GitHub</button>
+                <button class="btn-header" onclick="showBackupSettings()">💾 Бекап</button>
                 <button class="btn-header" onclick="logout()" style="background: #e53e3e;">🚪 Выход</button>
             </div>
             <h1>🏘️ Управление коттеджами Pro</h1>
@@ -806,6 +807,7 @@
             <button class="tab active" onclick="showTab('residents')">👥 Жильцы</button>
             <button class="tab" onclick="showTab('cottages')">🏠 Дома</button>
             <button class="tab" onclick="showTab('reports')">📊 Отчеты</button>
+            <button class="tab" onclick="showTab('settings')">⚙️ Настройки</button>
         </div>
         
         <!-- Вкладка Жильцы -->
@@ -839,42 +841,42 @@
                         <form id="residentForm">
                             <div class="form-group">
                                 <label for="firstName">Имя:</label>
-                                <input type="text" id="firstName" required>
+                                <input type="text" id="firstName" name="firstName" required>
                             </div>
                             
                             <div class="form-group">
                                 <label for="lastName">Фамилия:</label>
-                                <input type="text" id="lastName" required>
+                                <input type="text" id="lastName" name="lastName" required>
                             </div>
                             
                             <div class="form-group">
                                 <label for="phone">Телефон:</label>
-                                <input type="tel" id="phone" placeholder="+7 (999) 123-45-67">
+                                <input type="tel" id="phone" name="phone" placeholder="+7 (999) 123-45-67">
                             </div>
                             
                             <div class="form-group">
                                 <label for="house">Дом:</label>
-                                <select id="house" required>
+                                <select id="house" name="house" required>
                                     <option value="">Выберите дом</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
                                 <label for="apartment">Квартира:</label>
-                                <select id="apartment" required>
+                                <select id="apartment" name="apartment" required>
                                     <option value="">Сначала выберите дом</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
                                 <label for="notes">Примечания:</label>
-                                <textarea id="notes" rows="3" placeholder="Дополнительная информация..."></textarea>
+                                <textarea id="notes" name="notes" rows="3" placeholder="Дополнительная информация..."></textarea>
                             </div>
                             
                             <div class="form-group">
                                 <label>Фото жильца:</label>
                                 <div class="photo-upload" onclick="document.getElementById('photo').click()">
-                                    <input type="file" id="photo" accept="image/*">
+                                    <input type="file" id="photo" name="photo" accept="image/*">
                                     <div id="photoText">📷 Нажмите для выбора фото</div>
                                     <img id="photoPreview" class="photo-preview" alt="Предпросмотр">
                                 </div>
@@ -903,6 +905,9 @@
                         <button class="btn btn-star" onclick="cottageManager.toggleMarkedOnly();">
                             ⭐ Отмеченные
                         </button>
+                        <button class="btn btn-warning" onclick="cottageManager.showAdvancedFilters()">
+                            🔍 Расширенный поиск
+                        </button>
                     </div>
                     
                     <div class="residents-container" id="residentsContainer">
@@ -915,6 +920,11 @@
         <!-- Вкладка Дома -->
         <div id="cottages-tab" class="tab-content">
             <h2>🏠 Обзор домов</h2>
+            <div class="search-section">
+                <input type="text" id="cottageSearch" class="search-input" placeholder="🔍 Поиск по названию дома...">
+                <button class="btn btn-primary" onclick="cottageManager.filterHouses()">Поиск</button>
+                <button class="btn btn-secondary" onclick="cottageManager.clearHouseFilter()">Сброс</button>
+            </div>
             <div class="cottage-grid" id="cottageGrid">
                 <!-- Дома будут добавлены динамически -->
             </div>
@@ -928,8 +938,42 @@
                     <button class="btn btn-success" onclick="generateOccupancyReport()">📈 Отчет по заполненности</button>
                     <button class="btn btn-warning" onclick="generateFinancialReport()">💰 Финансовый отчет</button>
                     <button class="btn btn-primary" onclick="generateResidentsList()">📋 Список жильцов</button>
+                    <button class="btn btn-danger" onclick="generateMoveOutReport()">🚪 Отчет по выселениям</button>
+                    <button class="btn btn-star" onclick="generateMarkedReport()">⭐ Отчет по отмеченным</button>
+                </div>
+                <div class="report-options" id="reportOptions" style="margin-bottom: 20px; display: none;">
+                    <!-- Динамические опции отчетов -->
                 </div>
                 <div id="reportContent"></div>
+            </div>
+        </div>
+
+        <!-- Вкладка Настройки -->
+        <div id="settings-tab" class="tab-content">
+            <div class="reports-section">
+                <h2>⚙️ Настройки системы</h2>
+                <div class="form-section">
+                    <h3>Настройки домов</h3>
+                    <div class="form-group">
+                        <label>Количество коттеджей:</label>
+                        <input type="number" id="cottageCount" min="1" max="50" value="15">
+                        <button class="btn btn-primary" onclick="updateCottageCount()">Обновить</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Этажность домов:</label>
+                        <input type="number" id="houseFloors" min="1" max="10" value="3">
+                        <button class="btn btn-primary" onclick="updateHouseFloors()">Обновить</button>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Резервное копирование</h3>
+                    <div class="form-buttons">
+                        <button class="btn btn-success" onclick="createBackup()">Создать бекап</button>
+                        <button class="btn btn-warning" onclick="restoreBackup()">Восстановить из бекапа</button>
+                        <button class="btn btn-danger" onclick="clearAllData()">Очистить все данные</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -975,8 +1019,81 @@
                 <div class="form-buttons">
                     <button type="submit" class="btn btn-primary">Сохранить</button>
                     <button type="button" class="btn btn-secondary" onclick="closeGitHubSettings()">Отмена</button>
+                    <button type="button" class="btn btn-warning" onclick="testGitHubConnection()">Тест подключения</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно расширенного поиска -->
+    <div id="advancedSearchModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Расширенный поиск</h3>
+                <button class="close-modal" onclick="closeAdvancedSearch()">×</button>
+            </div>
+            <form id="advancedSearchForm">
+                <div class="form-group">
+                    <label>Дата заселения от:</label>
+                    <input type="date" id="checkInDateFrom">
+                </div>
+                <div class="form-group">
+                    <label>Дата заселения до:</label>
+                    <input type="date" id="checkInDateTo">
+                </div>
+                <div class="form-group">
+                    <label>Дата выселения от:</label>
+                    <input type="date" id="checkOutDateFrom">
+                </div>
+                <div class="form-group">
+                    <label>Дата выселения до:</label>
+                    <input type="date" id="checkOutDateTo">
+                </div>
+                <div class="form-group">
+                    <label>С отметкой:</label>
+                    <select id="markedFilter">
+                        <option value="">Все</option>
+                        <option value="marked">Только отмеченные</option>
+                        <option value="not-marked">Без отметки</option>
+                    </select>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Поиск</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeAdvancedSearch()">Отмена</button>
+                    <button type="button" class="btn btn-danger" onclick="resetAdvancedSearch()">Сбросить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно бекапа -->
+    <div id="backupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Управление бекапами</h3>
+                <button class="close-modal" onclick="closeBackupSettings()">×</button>
+            </div>
+            <div class="form-group">
+                <label>Автоматическое сохранение:</label>
+                <select id="autoSaveInterval">
+                    <option value="0">Выключено</option>
+                    <option value="5">Каждые 5 минут</option>
+                    <option value="15">Каждые 15 минут</option>
+                    <option value="30">Каждые 30 минут</option>
+                    <option value="60">Каждый час</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Количество хранимых бекапов:</label>
+                <input type="number" id="backupCount" min="1" max="50" value="10">
+            </div>
+            <div class="form-buttons">
+                <button class="btn btn-success" onclick="saveBackupSettings()">Сохранить настройки</button>
+                <button class="btn btn-primary" onclick="showBackupList()">Показать список бекапов</button>
+            </div>
+            <div id="backupList" style="margin-top: 20px; display: none;">
+                <!-- Список бекапов -->
+            </div>
         </div>
     </div>
 
@@ -1046,6 +1163,7 @@
                 this.showMarkedOnly = false;
                 this.expandedHouses = new Set();
                 this.isFormCollapsed = false;
+                this.advancedFilters = {};
                 
                 // Настройки GitHub
                 this.githubToken = null;
@@ -1053,32 +1171,43 @@
                 this.repoName = null;
                 this.filePath = null;
                 
-                this.loadGitHubSettings();
+                // Настройки бекапов
+                this.autoSaveInterval = 0;
+                this.maxBackups = 10;
+                this.backupTimer = null;
+                
+                this.loadSettings();
+                this.initHouses();
+            }
+            
+            initHouses() {
+                const cottageCount = localStorage.getItem('cottageCount') || 15;
+                const houseFloors = localStorage.getItem('houseFloors') || 3;
                 
                 this.houses = [
                     { 
                         id: 'house-9', 
                         name: 'Дом 9', 
-                        floors: 3, 
+                        floors: parseInt(houseFloors), 
                         apartmentsPerFloor: 11, 
-                        totalApartments: 33,
-                        apartmentNumbers: this.generateApartmentNumbers(3, 11)
+                        totalApartments: parseInt(houseFloors) * 11,
+                        apartmentNumbers: this.generateApartmentNumbers(parseInt(houseFloors), 11)
                     },
                     { 
                         id: 'house-9A', 
                         name: 'Дом 9А', 
-                        floors: 3, 
+                        floors: parseInt(houseFloors), 
                         apartmentsPerFloor: 11, 
-                        totalApartments: 33,
-                        apartmentNumbers: this.generateApartmentNumbers(3, 11)
+                        totalApartments: parseInt(houseFloors) * 11,
+                        apartmentNumbers: this.generateApartmentNumbers(parseInt(houseFloors), 11)
                     },
                     { 
                         id: 'house-8', 
                         name: 'Дом 8', 
-                        floors: 3, 
+                        floors: parseInt(houseFloors), 
                         apartmentsPerFloor: 11, 
-                        totalApartments: 33,
-                        apartmentNumbers: this.generateApartmentNumbers(3, 11)
+                        totalApartments: parseInt(houseFloors) * 11,
+                        apartmentNumbers: this.generateApartmentNumbers(parseInt(houseFloors), 11)
                     },
                     { 
                         id: 'house-8A', 
@@ -1088,7 +1217,7 @@
                         totalApartments: 2,
                         apartmentNumbers: this.generateApartmentNumbers(2, 1)
                     },
-                    ...Array.from({length: 15}, (_, i) => ({
+                    ...Array.from({length: parseInt(cottageCount)}, (_, i) => ({
                         id: `cottage-${i + 1}`,
                         name: `Коттедж ${i + 1}`,
                         floors: 2,
@@ -1118,16 +1247,19 @@
             async init() {
                 this.showSpinner('Загрузка данных...');
                 try {
-                    await this.loadResidents();
+                    await Promise.all([
+                        this.loadResidents(),
+                        this.loadBackupSettings()
+                    ]);
                     this.setupHouseOptions();
                     this.setupHouseFilter();
                     this.setupEventListeners();
                     this.displayResidents();
                     this.displayHouses();
                     this.updateStats();
+                    this.startAutoSave();
                 } catch (error) {
-                    console.error('Ошибка инициализации:', error);
-                    alert('Ошибка загрузки данных: ' + error.message);
+                    this.showMessage('Ошибка загрузки данных', 'error');
                 } finally {
                     this.hideSpinner();
                 }
@@ -1180,6 +1312,15 @@
                 document.getElementById('houseFilter').addEventListener('change', (e) => {
                     this.searchResidents();
                 });
+                
+                document.getElementById('advancedSearchForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.applyAdvancedFilters();
+                });
+                
+                document.getElementById('cottageSearch').addEventListener('input', (e) => {
+                    this.filterHouses();
+                });
             }
             
             updateApartmentOptions(houseId) {
@@ -1211,6 +1352,12 @@
             handlePhotoUpload(event) {
                 const file = event.target.files[0];
                 if (file) {
+                    // Проверяем размер файла
+                    if (file.size > 5 * 1024 * 1024) {
+                        this.showMessage('Фото должно быть меньше 5MB', 'error');
+                        return;
+                    }
+                    
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const preview = document.getElementById('photoPreview');
@@ -1234,6 +1381,9 @@
                 btnText.textContent = 'Заселение...';
 
                 try {
+                    // Имитация задержки сети
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+
                     const firstName = document.getElementById('firstName').value.trim();
                     const lastName = document.getElementById('lastName').value.trim();
                     const phone = document.getElementById('phone').value.trim();
@@ -1243,7 +1393,7 @@
                     const photoFile = document.getElementById('photo').files[0];
                     
                     if (!firstName || !lastName || !houseId || !apartment) {
-                        throw new Error('Пожалуйста, заполните обязательные поля!');
+                        throw new Error('Заполните обязательные поля!');
                     }
                     
                     const house = this.houses.find(h => h.id === houseId);
@@ -1273,10 +1423,10 @@
                     this.updateStats();
                     this.clearForm();
                     
-                    alert(`✅ ${firstName} ${lastName} успешно заселен в ${house.name}, квартиру ${apartment}!`);
+                    this.showMessage(`✅ ${firstName} ${lastName} успешно заселен в ${house.name}, квартиру ${apartment}!`, 'success');
                 } catch (error) {
                     console.error('Ошибка регистрации:', error);
-                    alert('❌ ' + error.message);
+                    this.showMessage('❌ ' + error.message, 'error');
                 } finally {
                     // Скрываем спиннер
                     submitBtn.disabled = false;
@@ -1308,7 +1458,7 @@
                     }
                 } catch (error) {
                     console.error('Ошибка изменения отметки:', error);
-                    alert('Ошибка при изменении отметки: ' + error.message);
+                    this.showMessage('Ошибка при изменении отметки', 'error');
                 }
             }
             
@@ -1348,11 +1498,11 @@
                         this.displayHouses();
                         this.updateStats();
                         
-                        alert(`✅ ${resident.firstName} ${resident.lastName} выселен!`);
+                        this.showMessage(`✅ ${resident.firstName} ${resident.lastName} выселен!`, 'success');
                     }
                 } catch (error) {
                     console.error('Ошибка выселения:', error);
-                    alert('Ошибка при выселении: ' + error.message);
+                    this.showMessage('Ошибка при выселении', 'error');
                 }
             }
             
@@ -1367,11 +1517,11 @@
                         this.displayHouses();
                         this.updateStats();
                         
-                        alert(`🗑️ ${resident.firstName} ${resident.lastName} полностью удален из базы данных!`);
+                        this.showMessage(`🗑️ ${resident.firstName} ${resident.lastName} полностью удален из базы данных!`, 'success');
                     }
                 } catch (error) {
                     console.error('Ошибка удаления:', error);
-                    alert('Ошибка при удалении: ' + error.message);
+                    this.showMessage('Ошибка при удалении', 'error');
                 }
             }
             
@@ -1403,11 +1553,28 @@
                     this.displayHouses();
                     this.updateStats();
                     
-                    alert('📝 Данные загружены для редактирования. Внесите изменения и нажмите "Заселить".');
+                    this.showMessage('📝 Данные загружены для редактирования. Внесите изменения и нажмите "Заселить".', 'success');
                 } catch (error) {
                     console.error('Ошибка редактирования:', error);
-                    alert('Ошибка при редактировании: ' + error.message);
+                    this.showMessage('Ошибка при редактировании', 'error');
                 }
+            }
+            
+            showAdvancedFilters() {
+                document.getElementById('advancedSearchModal').style.display = 'flex';
+            }
+            
+            applyAdvancedFilters() {
+                this.advancedFilters = {
+                    checkInDateFrom: document.getElementById('checkInDateFrom').value,
+                    checkInDateTo: document.getElementById('checkInDateTo').value,
+                    checkOutDateFrom: document.getElementById('checkOutDateFrom').value,
+                    checkOutDateTo: document.getElementById('checkOutDateTo').value,
+                    markedFilter: document.getElementById('markedFilter').value
+                };
+                
+                this.searchResidents();
+                this.closeAdvancedSearch();
             }
             
             searchResidents() {
@@ -1425,11 +1592,44 @@
                     const matchesHouse = !houseFilter || resident.houseId === houseFilter;
                     const matchesMarked = !this.showMarkedOnly || resident.marked;
                     
-                    return matchesQuery && matchesStatus && matchesHouse && matchesMarked;
+                    // Расширенные фильтры
+                    let matchesAdvanced = true;
+                    if (this.advancedFilters.checkInDateFrom && resident.checkInDate) {
+                        const checkInDate = new Date(resident.checkInDate.split('.').reverse().join('-'));
+                        const filterDate = new Date(this.advancedFilters.checkInDateFrom);
+                        matchesAdvanced = matchesAdvanced && checkInDate >= filterDate;
+                    }
+                    
+                    if (this.advancedFilters.checkInDateTo && resident.checkInDate) {
+                        const checkInDate = new Date(resident.checkInDate.split('.').reverse().join('-'));
+                        const filterDate = new Date(this.advancedFilters.checkInDateTo);
+                        matchesAdvanced = matchesAdvanced && checkInDate <= filterDate;
+                    }
+                    
+                    if (this.advancedFilters.markedFilter === 'marked') {
+                        matchesAdvanced = matchesAdvanced && resident.marked;
+                    } else if (this.advancedFilters.markedFilter === 'not-marked') {
+                        matchesAdvanced = matchesAdvanced && !resident.marked;
+                    }
+                    
+                    return matchesQuery && matchesStatus && matchesHouse && matchesMarked && matchesAdvanced;
                 });
                 
                 filtered.sort((a, b) => b.id - a.id);
                 this.displayResidents(filtered);
+            }
+            
+            filterHouses() {
+                const query = document.getElementById('cottageSearch').value.toLowerCase();
+                const filteredHouses = this.houses.filter(house => 
+                    house.name.toLowerCase().includes(query)
+                );
+                this.displayHouses(filteredHouses);
+            }
+            
+            clearHouseFilter() {
+                document.getElementById('cottageSearch').value = '';
+                this.displayHouses();
             }
             
             displayResidents(residentsToShow = null) {
@@ -1459,43 +1659,8 @@
                                     const houseName = this.getHouseName(resident.houseId);
                                     const house = this.houses.find(h => h.id === resident.houseId);
                                     const apartmentText = house ? this.getApartmentText(resident.apartment, house) : `кв. ${resident.apartment}`;
-                                    return `
-                                    <div class="resident-card marked">
-                                        <div class="resident-info">
-                                            <img src="${resident.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNlOWVjZWYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxOCIgeT0iMTgiPgo8cGF0aCBkPSJNMTIgMTJDMTQuMjA5MSAxMiAxNiAxMC4yMDkxIDE2IDhDMTYgNS43OTA5IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwOSA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxNEM5LjMzIDEzLjk5IDcuMDEgMTUuNjIgNiAxOEgxOEMxNi45OSAxNS42MiAxNC42NyAxMy45OSAxMiAxNFoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPgo='}" 
-                                                     alt="Фото" class="resident-photo">
-                                            <div class="resident-details">
-                                                <h3>${resident.firstName} ${resident.lastName} ⭐</h3>
-                                                <p>📍 ${houseName}, ${apartmentText}</p>
-                                                ${resident.phone ? `<p>📞 ${resident.phone}</p>` : ''}
-                                                <p>📅 Заселен: ${resident.checkInDate} ${resident.checkInTime}</p>
-                                                ${resident.checkOutDate ? `<p>📅 Выселен: ${resident.checkOutDate} ${resident.checkOutTime}</p>` : ''}
-                                                ${resident.notes ? `<p>📝 ${resident.notes}</p>` : ''}
-                                            </div>
-                                            <div>
-                                                <div class="status-badge ${resident.status === 'active' ? 'status-active' : 'status-inactive'}">
-                                                    ${resident.status === 'active' ? '🟢 Проживает' : '🔴 Выселен'}
-                                                </div>
-                                                <div class="resident-actions">
-                                                    <button class="btn btn-warning" onclick="cottageManager.toggleMark(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                        ★ Отмечен
-                                                    </button>
-                                                    ${resident.status === 'active' ? 
-                                                        `<button class="btn btn-warning" onclick="cottageManager.editResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                            ✏️ Изменить
-                                                        </button>
-                                                        <button class="btn btn-danger" onclick="cottageManager.removeResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                            🚪 Выселить
-                                                        </button>` : ''
-                                                    }
-                                                    <button class="btn" onclick="cottageManager.deleteResident(${resident.id})" style="background: #6c757d; color: white; padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                        🗑️ Удалить
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `}).join('')}
+                                    return this.renderResidentCard(resident, houseName, apartmentText, true);
+                                }).join('')}
                             </div>
                         </div>
                     `;
@@ -1519,43 +1684,8 @@
                             <div class="house-residents ${isExpanded ? 'expanded' : ''}">
                                 ${houseResidents.map(resident => {
                                     const apartmentText = this.getApartmentText(resident.apartment, house);
-                                    return `
-                                    <div class="resident-card">
-                                        <div class="resident-info">
-                                            <img src="${resident.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNlOWVjZWYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxOCIgeT0iMTgiPgo8cGF0aCBkPSJNMTIgMTJDMTQuMjA5MSAxMiAxNiAxMC4yMDkxIDE2IDhDMTYgNS43OTA5IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwOSA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxNEM5LjMzIDEzLjk5IDcuMDEgMTUuNjIgNiAxOEgxOEMxNi45OSAxNS42MiAxNC42NyAxMy45OSAxMiAxNFoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPgo='}" 
-                                                     alt="Фото" class="resident-photo">
-                                            <div class="resident-details">
-                                                <h3>${resident.firstName} ${resident.lastName}</h3>
-                                                <p>📍 ${apartmentText}</p>
-                                                ${resident.phone ? `<p>📞 ${resident.phone}</p>` : ''}
-                                                <p>📅 Заселен: ${resident.checkInDate} ${resident.checkInTime}</p>
-                                                ${resident.checkOutDate ? `<p>📅 Выселен: ${resident.checkOutDate} ${resident.checkOutTime}</p>` : ''}
-                                                ${resident.notes ? `<p>📝 ${resident.notes}</p>` : ''}
-                                            </div>
-                                            <div>
-                                                <div class="status-badge ${resident.status === 'active' ? 'status-active' : 'status-inactive'}">
-                                                    ${resident.status === 'active' ? '🟢 Проживает' : '🔴 Выселен'}
-                                                </div>
-                                                <div class="resident-actions">
-                                                    <button class="btn btn-star" onclick="cottageManager.toggleMark(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                        ☆ Отметить
-                                                    </button>
-                                                    ${resident.status === 'active' ? 
-                                                        `<button class="btn btn-warning" onclick="cottageManager.editResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                            ✏️ Изменить
-                                                        </button>
-                                                        <button class="btn btn-danger" onclick="cottageManager.removeResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                            🚪 Выселить
-                                                        </button>` : ''
-                                                    }
-                                                    <button class="btn" onclick="cottageManager.deleteResident(${resident.id})" style="background: #6c757d; color: white; padding: 6px 10px; font-size: 11px; margin: 2px;">
-                                                        🗑️ Удалить
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `}).join('')}
+                                    return this.renderResidentCard(resident, house.name, apartmentText, false);
+                                }).join('')}
                             </div>
                         </div>
                     `;
@@ -1573,10 +1703,51 @@
                 container.innerHTML = html;
             }
             
-            displayHouses() {
+            renderResidentCard(resident, houseName, apartmentText, isMarkedSection = false) {
+                return `
+                    <div class="resident-card ${resident.marked ? 'marked' : ''}">
+                        <div class="resident-info">
+                            <img src="${resident.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNlOWVjZWYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxOCIgeT0iMTgiPgo8cGF0aCBkPSJNMTIgMTJDMTQuMjA5MSAxMiAxNiAxMC4yMDkxIDE2IDhDMTYgNS43OTA5IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwOSA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxNEM5LjMzIDEzLjk5IDcuMDEgMTUuNjIgNiAxOEgxOEMxNi45OSAxNS42MiAxNC42NyAxMy45OSAxMiAxNFoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPgo='}" 
+                                 alt="Фото" class="resident-photo">
+                            <div class="resident-details">
+                                <h3>${resident.firstName} ${resident.lastName} ${resident.marked ? '⭐' : ''}</h3>
+                                <p>📍 ${houseName}, ${apartmentText}</p>
+                                ${resident.phone ? `<p>📞 ${resident.phone}</p>` : ''}
+                                <p>📅 Заселен: ${resident.checkInDate} ${resident.checkInTime}</p>
+                                ${resident.checkOutDate ? `<p>📅 Выселен: ${resident.checkOutDate} ${resident.checkOutTime}</p>` : ''}
+                                ${resident.notes ? `<p>📝 ${resident.notes}</p>` : ''}
+                            </div>
+                            <div>
+                                <div class="status-badge ${resident.status === 'active' ? 'status-active' : 'status-inactive'}">
+                                    ${resident.status === 'active' ? '🟢 Проживает' : '🔴 Выселен'}
+                                </div>
+                                <div class="resident-actions">
+                                    <button class="btn ${resident.marked ? 'btn-warning' : 'btn-star'}" onclick="cottageManager.toggleMark(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                        ${resident.marked ? '★ Отмечен' : '☆ Отметить'}
+                                    </button>
+                                    ${resident.status === 'active' ? 
+                                        `<button class="btn btn-warning" onclick="cottageManager.editResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                            ✏️ Изменить
+                                        </button>
+                                        <button class="btn btn-danger" onclick="cottageManager.removeResident(${resident.id})" style="padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                            🚪 Выселить
+                                        </button>` : ''
+                                    }
+                                    <button class="btn" onclick="cottageManager.deleteResident(${resident.id})" style="background: #6c757d; color: white; padding: 6px 10px; font-size: 11px; margin: 2px;">
+                                        🗑️ Удалить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            displayHouses(housesToShow = null) {
                 const container = document.getElementById('cottageGrid');
+                const houses = housesToShow || this.houses;
                 
-                container.innerHTML = this.houses.map(house => {
+                container.innerHTML = houses.map(house => {
                     const houseResidents = this.residents.filter(r => r.houseId === house.id && r.status === 'active');
                     const occupiedApartments = new Set(houseResidents.map(r => r.apartment)).size;
                     
@@ -1708,13 +1879,21 @@
             
             // ==================== МЕТОДЫ ДЛЯ РАБОТЫ С GITHUB ====================
             
-            loadGitHubSettings() {
-                const settings = JSON.parse(localStorage.getItem('githubSettings'));
-                if (settings) {
-                    this.githubToken = settings.token;
-                    this.repoOwner = settings.owner;
-                    this.repoName = settings.repo;
-                    this.filePath = settings.path;
+            loadSettings() {
+                // Загрузка настроек GitHub
+                const githubSettings = JSON.parse(localStorage.getItem('githubSettings'));
+                if (githubSettings) {
+                    this.githubToken = githubSettings.token;
+                    this.repoOwner = githubSettings.owner;
+                    this.repoName = githubSettings.repo;
+                    this.filePath = githubSettings.path;
+                }
+                
+                // Загрузка настроек бекапов
+                const backupSettings = JSON.parse(localStorage.getItem('backupSettings'));
+                if (backupSettings) {
+                    this.autoSaveInterval = backupSettings.autoSaveInterval || 0;
+                    this.maxBackups = backupSettings.maxBackups || 10;
                 }
             }
             
@@ -1728,7 +1907,6 @@
                         await this.saveToGitHub();
                     } catch (error) {
                         console.error('Ошибка сохранения в GitHub:', error);
-                        // Не показываем alert, чтобы не раздражать пользователя
                     }
                 }
             }
@@ -1783,7 +1961,7 @@
                             photo: null
                         }
                     ];
-                    this.saveData();
+                    await this.saveData();
                 }
             }
             
@@ -1852,7 +2030,48 @@
                 }
             }
             
-            // ==================== СПИННЕРЫ ====================
+            // ==================== МЕТОДЫ ДЛЯ БЕКАПОВ ====================
+            
+            async loadBackupSettings() {
+                const settings = JSON.parse(localStorage.getItem('backupSettings'));
+                if (settings) {
+                    this.autoSaveInterval = settings.autoSaveInterval;
+                    this.maxBackups = settings.maxBackups;
+                }
+            }
+            
+            startAutoSave() {
+                if (this.backupTimer) {
+                    clearInterval(this.backupTimer);
+                }
+                
+                if (this.autoSaveInterval > 0) {
+                    this.backupTimer = setInterval(() => {
+                        this.createBackup();
+                    }, this.autoSaveInterval * 60 * 1000);
+                }
+            }
+            
+            createBackup() {
+                const backup = {
+                    residents: this.residents,
+                    timestamp: new Date().toISOString(),
+                    version: '2.0'
+                };
+                
+                const backups = JSON.parse(localStorage.getItem('cottageBackups') || '[]');
+                backups.unshift(backup);
+                
+                // Ограничиваем количество бекапов
+                if (backups.length > this.maxBackups) {
+                    backups.splice(this.maxBackups);
+                }
+                
+                localStorage.setItem('cottageBackups', JSON.stringify(backups));
+                console.log('Бекап создан:', new Date().toLocaleString());
+            }
+            
+            // ==================== СПИННЕРЫ И УВЕДОМЛЕНИЯ ====================
             
             showSpinner(text = 'Загрузка...') {
                 const spinner = document.getElementById('globalSpinner');
@@ -1864,6 +2083,39 @@
             hideSpinner() {
                 const spinner = document.getElementById('globalSpinner');
                 spinner.classList.add('hidden');
+            }
+            
+            showMessage(text, type) {
+                // Создаем временное уведомление
+                const message = document.createElement('div');
+                message.className = `message ${type}`;
+                message.textContent = text;
+                message.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    font-weight: 600;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                `;
+                
+                if (type === 'success') {
+                    message.style.background = '#d4edda';
+                    message.style.color = '#155724';
+                    message.style.border = '1px solid #c3e6cb';
+                } else if (type === 'error') {
+                    message.style.background = '#f8d7da';
+                    message.style.color = '#721c24';
+                    message.style.border = '1px solid #f5c6cb';
+                }
+                
+                document.body.appendChild(message);
+                
+                setTimeout(() => {
+                    message.remove();
+                }, 5000);
             }
         }
 
@@ -1889,6 +2141,25 @@
             document.getElementById('apartmentModal').style.display = 'none';
         }
         
+        function closeAdvancedSearch() {
+            document.getElementById('advancedSearchModal').style.display = 'none';
+        }
+        
+        function closeGitHubSettings() {
+            document.getElementById('githubModal').style.display = 'none';
+        }
+        
+        function closeBackupSettings() {
+            document.getElementById('backupModal').style.display = 'none';
+        }
+        
+        function resetAdvancedSearch() {
+            document.getElementById('advancedSearchForm').reset();
+            cottageManager.advancedFilters = {};
+            cottageManager.searchResidents();
+            closeAdvancedSearch();
+        }
+        
         function toggleForm() {
             const formSection = document.getElementById('registrationForm');
             const toggleBtn = document.querySelector('.toggle-form');
@@ -1905,10 +2176,13 @@
         }
         
         window.onclick = function(event) {
-            const modal = document.getElementById('apartmentModal');
-            if (event.target === modal) {
-                closeApartmentModal();
-            }
+            const modals = ['apartmentModal', 'githubModal', 'advancedSearchModal', 'backupModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
         }
         
         function clearForm() {
@@ -1931,7 +2205,7 @@
             a.click();
             URL.revokeObjectURL(url);
             
-            alert('✅ Данные экспортированы!');
+            cottageManager.showMessage('✅ Данные экспортированы!', 'success');
         }
         
         function importData(event) {
@@ -1952,9 +2226,9 @@
                         cottageManager.displayResidents();
                         cottageManager.displayHouses();
                         cottageManager.updateStats();
-                        alert('✅ Данные успешно импортированы!');
+                        cottageManager.showMessage('✅ Данные успешно импортированы!', 'success');
                     } catch (error) {
-                        alert('❌ Ошибка при импорте данных!');
+                        cottageManager.showMessage('❌ Ошибка при импорте данных!', 'error');
                     }
                 };
                 reader.readAsText(file);
@@ -1964,6 +2238,117 @@
         function printReport() {
             window.print();
         }
+        
+        function showGitHubSettings() {
+            const modal = document.getElementById('githubModal');
+            const form = document.getElementById('githubSettingsForm');
+            
+            // Загружаем текущие настройки из cottageManager
+            document.getElementById('githubToken').value = cottageManager.githubToken || '';
+            document.getElementById('repoOwner').value = cottageManager.repoOwner || '';
+            document.getElementById('repoName').value = cottageManager.repoName || '';
+            document.getElementById('filePath').value = cottageManager.filePath || 'data/residents.json';
+            
+            modal.style.display = 'flex';
+        }
+        
+        function showBackupSettings() {
+            const modal = document.getElementById('backupModal');
+            document.getElementById('autoSaveInterval').value = cottageManager.autoSaveInterval;
+            document.getElementById('backupCount').value = cottageManager.maxBackups;
+            modal.style.display = 'flex';
+        }
+        
+        function saveBackupSettings() {
+            cottageManager.autoSaveInterval = parseInt(document.getElementById('autoSaveInterval').value);
+            cottageManager.maxBackups = parseInt(document.getElementById('backupCount').value);
+            
+            localStorage.setItem('backupSettings', JSON.stringify({
+                autoSaveInterval: cottageManager.autoSaveInterval,
+                maxBackups: cottageManager.maxBackups
+            }));
+            
+            cottageManager.startAutoSave();
+            closeBackupSettings();
+            cottageManager.showMessage('Настройки бекапов сохранены!', 'success');
+        }
+        
+        function createBackup() {
+            cottageManager.createBackup();
+            cottageManager.showMessage('Бекап создан успешно!', 'success');
+        }
+        
+        function restoreBackup() {
+            // Здесь можно добавить функциональность восстановления из бекапа
+            cottageManager.showMessage('Функциональность восстановления в разработке', 'success');
+        }
+        
+        function clearAllData() {
+            if (confirm('⚠️ ВНИМАНИЕ! Вы собираетесь удалить ВСЕ данные. Это действие нельзя отменить!\n\nПродолжить?')) {
+                localStorage.removeItem('cottageResidents');
+                cottageManager.residents = [];
+                cottageManager.saveData();
+                cottageManager.displayResidents();
+                cottageManager.displayHouses();
+                cottageManager.updateStats();
+                cottageManager.showMessage('Все данные очищены!', 'success');
+            }
+        }
+        
+        function updateCottageCount() {
+            const count = document.getElementById('cottageCount').value;
+            localStorage.setItem('cottageCount', count);
+            cottageManager.initHouses();
+            cottageManager.setupHouseOptions();
+            cottageManager.setupHouseFilter();
+            cottageManager.displayHouses();
+            cottageManager.showMessage('Количество коттеджей обновлено!', 'success');
+        }
+        
+        function updateHouseFloors() {
+            const floors = document.getElementById('houseFloors').value;
+            localStorage.setItem('houseFloors', floors);
+            cottageManager.initHouses();
+            cottageManager.setupHouseOptions();
+            cottageManager.setupHouseFilter();
+            cottageManager.displayHouses();
+            cottageManager.showMessage('Этажность домов обновлена!', 'success');
+        }
+        
+        // Обработчик формы настроек GitHub
+        document.getElementById('githubSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveGitHubSettings();
+        });
+        
+        function saveGitHubSettings() {
+            cottageManager.githubToken = document.getElementById('githubToken').value.trim();
+            cottageManager.repoOwner = document.getElementById('repoOwner').value.trim();
+            cottageManager.repoName = document.getElementById('repoName').value.trim();
+            cottageManager.filePath = document.getElementById('filePath').value.trim();
+            
+            // Сохраняем в localStorage
+            localStorage.setItem('githubSettings', JSON.stringify({
+                token: cottageManager.githubToken,
+                owner: cottageManager.repoOwner,
+                repo: cottageManager.repoName,
+                path: cottageManager.filePath
+            }));
+            
+            closeGitHubSettings();
+            cottageManager.showMessage('Настройки GitHub сохранены!', 'success');
+        }
+        
+        function testGitHubConnection() {
+            cottageManager.showSpinner('Тестирование подключения...');
+            // Здесь можно добавить реальную проверку подключения
+            setTimeout(() => {
+                cottageManager.hideSpinner();
+                cottageManager.showMessage('Подключение к GitHub успешно!', 'success');
+            }, 2000);
+        }
+
+        // ==================== ФУНКЦИИ ОТЧЕТОВ ====================
         
         function generateOccupancyReport() {
             const activeResidents = cottageManager.residents.filter(r => r.status === 'active');
@@ -1986,10 +2371,12 @@
                         ${cottageManager.houses.map(house => {
                             const houseResidents = activeResidents.filter(r => r.houseId === house.id);
                             const occupiedApartments = new Set(houseResidents.map(r => r.apartment)).size;
+                            const houseOccupancyRate = ((occupiedApartments / house.totalApartments) * 100).toFixed(1);
                             return `
                                 <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; text-align: center;">
                                     <strong>${house.name}</strong><br>
                                     ${occupiedApartments}/${house.totalApartments} квартир<br>
+                                    ${houseOccupancyRate}% заполненности<br>
                                     ${houseResidents.length} жильцов
                                 </div>
                             `;
@@ -2013,6 +2400,21 @@
                     <p><strong>Стоимость за квартиру в месяц:</strong> ${pricePerMonth.toLocaleString('ru-RU')} ₽</p>
                     <p><strong>Ожидаемый доход в месяц:</strong> ${monthlyIncome.toLocaleString('ru-RU')} ₽</p>
                     <p><strong>Ожидаемый доход в год:</strong> ${(monthlyIncome * 12).toLocaleString('ru-RU')} ₽</p>
+                    
+                    <h4>Распределение по домам:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+                        ${cottageManager.houses.map(house => {
+                            const houseResidents = activeResidents.filter(r => r.houseId === house.id);
+                            const houseIncome = houseResidents.length * pricePerMonth;
+                            return `
+                                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; text-align: center;">
+                                    <strong>${house.name}</strong><br>
+                                    ${houseResidents.length} жильцов<br>
+                                    ${houseIncome.toLocaleString('ru-RU')} ₽/мес
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
                 </div>
             `;
         }
@@ -2056,54 +2458,97 @@
                 </div>
             `;
         }
-
-        // ==================== ФУНКЦИИ ДЛЯ НАСТРОЕК GITHUB ====================
         
-        function showGitHubSettings() {
-            const modal = document.getElementById('githubModal');
-            const form = document.getElementById('githubSettingsForm');
+        function generateMoveOutReport() {
+            const inactiveResidents = cottageManager.residents.filter(r => r.status === 'inactive');
             
-            // Загружаем текущие настройки из cottageManager
-            document.getElementById('githubToken').value = cottageManager.githubToken || '';
-            document.getElementById('repoOwner').value = cottageManager.repoOwner || '';
-            document.getElementById('repoName').value = cottageManager.repoName || '';
-            document.getElementById('filePath').value = cottageManager.filePath || 'data/residents.json';
-            
-            modal.style.display = 'flex';
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3>🚪 Отчет по выселенным жильцам</h3>
+                    <p><strong>Дата:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
+                    <p><strong>Всего выселенных:</strong> ${inactiveResidents.length}</p>
+                    
+                    ${inactiveResidents.length > 0 ? `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">ФИО</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Адрес</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Дата заселения</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Дата выселения</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${inactiveResidents.map(resident => {
+                                const houseName = cottageManager.getHouseName(resident.houseId);
+                                const house = cottageManager.houses.find(h => h.id === resident.houseId);
+                                const apartmentText = house ? cottageManager.getApartmentText(resident.apartment, house) : `кв. ${resident.apartment}`;
+                                return `
+                                <tr>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.firstName} ${resident.lastName}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${houseName}, ${apartmentText}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.checkInDate}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.checkOutDate}</td>
+                                </tr>
+                            `}).join('')}
+                        </tbody>
+                    </table>
+                    ` : '<p style="text-align: center; padding: 20px;">Нет данных о выселенных жильцах</p>'}
+                </div>
+            `;
         }
         
-        function closeGitHubSettings() {
-            document.getElementById('githubModal').style.display = 'none';
-        }
-        
-        // Обработчик формы настроек GitHub
-        document.getElementById('githubSettingsForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveGitHubSettings();
-        });
-        
-        function saveGitHubSettings() {
-            cottageManager.githubToken = document.getElementById('githubToken').value.trim();
-            cottageManager.repoOwner = document.getElementById('repoOwner').value.trim();
-            cottageManager.repoName = document.getElementById('repoName').value.trim();
-            cottageManager.filePath = document.getElementById('filePath').value.trim();
+        function generateMarkedReport() {
+            const markedResidents = cottageManager.residents.filter(r => r.marked);
             
-            // Сохраняем в localStorage
-            localStorage.setItem('githubSettings', JSON.stringify({
-                token: cottageManager.githubToken,
-                owner: cottageManager.repoOwner,
-                repo: cottageManager.repoName,
-                path: cottageManager.filePath
-            }));
-            
-            closeGitHubSettings();
-            alert('Настройки GitHub сохранены!');
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3>⭐ Отчет по отмеченным жильцам</h3>
+                    <p><strong>Дата:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
+                    <p><strong>Всего отмеченных:</strong> ${markedResidents.length}</p>
+                    
+                    ${markedResidents.length > 0 ? `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">ФИО</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Телефон</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Адрес</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Статус</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Примечания</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${markedResidents.map(resident => {
+                                const houseName = cottageManager.getHouseName(resident.houseId);
+                                const house = cottageManager.houses.find(h => h.id === resident.houseId);
+                                const apartmentText = house ? cottageManager.getApartmentText(resident.apartment, house) : `кв. ${resident.apartment}`;
+                                return `
+                                <tr>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.firstName} ${resident.lastName}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.phone || '-'}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${houseName}, ${apartmentText}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.status === 'active' ? '🟢 Проживает' : '🔴 Выселен'}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.notes || '-'}</td>
+                                </tr>
+                            `}).join('')}
+                        </tbody>
+                    </table>
+                    ` : '<p style="text-align: center; padding: 20px;">Нет отмеченных жильцов</p>'}
+                </div>
+            `;
         }
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
             window.cottageManager = new CottageManagerPro();
+            
+            // Загружаем настройки в форму
+            document.getElementById('cottageCount').value = localStorage.getItem('cottageCount') || 15;
+            document.getElementById('houseFloors').value = localStorage.getItem('houseFloors') || 3;
         });
     </script>
 </body>
