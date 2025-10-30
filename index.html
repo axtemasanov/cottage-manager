@@ -2240,48 +2240,71 @@
             }
             
             async saveToGitHub() {
-                const url = `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${this.filePath}`;
-                
-                // Сначала получим текущий файл, чтобы получить sha (если файл существует)
-                let sha = null;
-                try {
-                    const getResponse = await fetch(url, {
-                        headers: {
-                            'Authorization': `token ${this.githubToken}`,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    });
-                    if (getResponse.ok) {
-                        const data = await getResponse.json();
-                        sha = data.sha;
-                    }
-                } catch (error) {
-                    // Файл может не существовать, тогда sha останется null
+    try {
+        const url = `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${this.filePath}`;
+        
+        console.log('🔄 Попытка сохранения в GitHub...');
+        
+        // Сначала пытаемся получить существующий файл
+        let sha = null;
+        try {
+            const getResponse = await fetch(url, {
+                headers: {
+                    'Authorization': `token ${this.githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'User-Agent': 'Cottage-Manager-App'
                 }
-                
-                const content = JSON.stringify(this.residents, null, 2);
-                const encodedContent = btoa(unescape(encodeURIComponent(content)));
-                
-                const body = {
-                    message: `Update residents data ${new Date().toISOString()}`,
-                    content: encodedContent,
-                    sha: sha
-                };
-                
-                const response = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${this.githubToken}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`GitHub: ${response.status} ${response.statusText}`);
-                }
+            });
+            
+            if (getResponse.ok) {
+                const data = await getResponse.json();
+                sha = data.sha;
+                console.log('✅ Файл найден, sha:', sha);
+            } else if (getResponse.status === 404) {
+                console.log('📝 Файл не существует, будет создан новый');
+            } else {
+                throw new Error(`GitHub API: ${getResponse.status} ${getResponse.statusText}`);
             }
+        } catch (error) {
+            console.warn('⚠️ Не удалось получить файл:', error.message);
+        }
+        
+        const content = JSON.stringify(this.residents, null, 2);
+        const encodedContent = btoa(unescape(encodeURIComponent(content)));
+        
+        const body = {
+            message: `🤖 Авто-сохранение: ${new Date().toLocaleString('ru-RU')}`,
+            content: encodedContent,
+            ...(sha && { sha: sha }) // Добавляем sha только если файл существует
+        };
+        
+        console.log('📤 Отправка данных в GitHub...');
+        
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${this.githubToken}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json',
+                'User-Agent': 'Cottage-Manager-App'
+            },
+            body: JSON.stringify(body)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`GitHub: ${response.status} - ${errorData.message || response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('✅ Успешно сохранено в GitHub!', result);
+        return result;
+        
+    } catch (error) {
+        console.error('❌ Ошибка сохранения в GitHub:', error);
+        throw error;
+    }
+}
             
             // ==================== МЕТОДЫ ДЛЯ БЕКАПОВ ====================
             
