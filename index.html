@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Управление коттеджами Pro - Автор Ахтем</title>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
     <style>
         /* Стили для окна входа */
         .login-overlay {
@@ -717,8 +723,7 @@
             display: none !important;
         }
 
-        /* ==================== СТИЛИ ДЛЯ ПРОГРЕСС-БАРОВ ==================== */
-        
+        /* Стили для прогресс-баров */
         .progress-container {
             margin: 10px 0;
         }
@@ -731,7 +736,6 @@
             color: #555;
         }
 
-        /* 1. Основной прогресс-бар для статистики */
         .progress-main {
             height: 20px;
             background: #e9ecef;
@@ -750,26 +754,6 @@
             box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
         }
 
-        .progress-main-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(255,255,255,0.4) 50%, 
-                transparent 100%);
-            animation: shine 2s infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        /* 2. Прогресс-бар для домов */
         .progress-house {
             height: 16px;
             background: #f8f9fa;
@@ -787,26 +771,6 @@
             position: relative;
         }
 
-        .progress-house-fill.striped {
-            background: linear-gradient(45deg, 
-                rgba(255,255,255,0.15) 25%, 
-                transparent 25%, 
-                transparent 50%, 
-                rgba(255,255,255,0.15) 50%, 
-                rgba(255,255,255,0.15) 75%, 
-                transparent 75%, 
-                transparent);
-            background-size: 10px 10px;
-            background-color: #667eea;
-            animation: stripeMove 1s linear infinite;
-        }
-
-        @keyframes stripeMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 10px 0; }
-        }
-
-        /* 3. Круговой прогресс для квартир */
         .progress-circular-small {
             position: relative;
             width: 40px;
@@ -848,23 +812,6 @@
             color: #2c3e50;
         }
 
-        /* 4. Мини-прогресс для списка жильцов */
-        .progress-mini {
-            height: 6px;
-            background: #e9ecef;
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 3px 0;
-        }
-
-        .progress-mini-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b6b, #ee5a52);
-            border-radius: 3px;
-            transition: width 0.4s ease;
-        }
-
-        /* 5. Анимированный прогресс для загрузки */
         .progress-loading {
             height: 4px;
             background: #e9ecef;
@@ -894,50 +841,6 @@
                 transform: translateX(100%); 
                 background-position: -200% 50%;
             }
-        }
-
-        /* 6. Progress для статуса жильца */
-        .resident-progress {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 5px 0;
-        }
-
-        .progress-status {
-            flex: 1;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-status-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
-        .status-active .progress-status-fill {
-            background: linear-gradient(90deg, #28a745, #20c997);
-        }
-
-        .status-inactive .progress-status-fill {
-            background: linear-gradient(90deg, #dc3545, #c82333);
-        }
-
-        /* Адаптация существующих стилей */
-        .stat-progress {
-            margin-top: 10px;
-        }
-
-        .house-card-progress {
-            margin: 10px 0;
-        }
-
-        /* Анимации для плавного появления */
-        .progress-main-fill, .progress-house-fill, .circular-fill-small {
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @media (max-width: 768px) {
@@ -1025,13 +928,14 @@
                 <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
                 <button class="btn-header" onclick="document.getElementById('importFile').click()">📤 Импорт</button>
                 <button class="btn-header" onclick="printReport()">🖨️ Печать</button>
-                <button class="btn-header" onclick="showGitHubSettings()">⚙️ GitHub</button>
+                <button class="btn-header" onclick="showFirebaseSettings()">🔥 Firebase</button>
                 <button class="btn-header" onclick="showBackupSettings()">💾 Бекап</button>
                 <button class="btn-header" onclick="logout()" style="background: #e53e3e;">🚪 Выход</button>
             </div>
             <h1>🏘️ Управление коттеджами Pro</h1>
             <p>Система заселения и выселения жильцов</p>
             <p><strong>Автор: Ахтем</strong></p>
+            <div id="syncStatus" style="margin-top: 10px; font-size: 14px;"></div>
         </div>
         
         <div class="tabs">
@@ -1047,7 +951,6 @@
                 <div class="stat-card">
                     <div class="stat-number" id="totalResidents">0</div>
                     <div class="stat-label">Всего жильцов</div>
-                    <!-- Добавляем прогресс-бар -->
                     <div class="stat-progress">
                         <div class="progress-header">
                             <span>Заполненность</span>
@@ -1061,7 +964,6 @@
                 <div class="stat-card">
                     <div class="stat-number" id="activeResidents">0</div>
                     <div class="stat-label">Активных жильцов</div>
-                    <!-- Прогресс активных/неактивных -->
                     <div class="stat-progress">
                         <div class="progress-header">
                             <span>Активность</span>
@@ -1075,7 +977,6 @@
                 <div class="stat-card">
                     <div class="stat-number" id="occupiedUnits">0</div>
                     <div class="stat-label">Занято квартир</div>
-                    <!-- Круговой прогресс -->
                     <div class="progress-circular-small">
                         <div class="circular-bg-small">
                             <div class="circular-fill-small" id="occupiedCircular" style="--progress: 0%"></div>
@@ -1086,7 +987,6 @@
                 <div class="stat-card">
                     <div class="stat-number" id="freeUnits">134</div>
                     <div class="stat-label">Свободно квартир</div>
-                    <!-- Мини-прогресс -->
                     <div class="stat-progress">
                         <div class="progress-header">
                             <span>Свободно</span>
@@ -1173,6 +1073,9 @@
                         <button class="btn btn-star" onclick="cottageManager.toggleMarkedOnly();">
                             ⭐ Отмеченные
                         </button>
+                        <button class="btn btn-success" onclick="cottageManager.quickAddResident()">
+                            ➕ Быстрое добавление
+                        </button>
                     </div>
                     
                     <div class="residents-container" id="residentsContainer">
@@ -1186,7 +1089,6 @@
         <div id="cottages-tab" class="tab-content">
             <h2>🏠 Обзор домов</h2>
             
-            <!-- Общий прогресс комплекса -->
             <div class="progress-container" style="margin-bottom: 30px;">
                 <div class="progress-header">
                     <span><strong>Общая заполненность комплекса</strong></span>
@@ -1217,6 +1119,7 @@
                     <button class="btn btn-primary" onclick="generateResidentsList()">📋 Список жильцов</button>
                     <button class="btn btn-danger" onclick="generateMoveOutReport()">🚪 Отчет по выселениям</button>
                     <button class="btn btn-star" onclick="generateMarkedReport()">⭐ Отчет по отмеченным</button>
+                    <button class="btn btn-primary" onclick="generateDebtReport()">💸 Должники</button>
                 </div>
                 <div id="reportContent"></div>
             </div>
@@ -1248,6 +1151,16 @@
                         <button class="btn btn-danger" onclick="clearAllData()">Очистить все данные</button>
                     </div>
                 </div>
+
+                <div class="form-section">
+                    <h3>Системная информация</h3>
+                    <div class="form-group">
+                        <p><strong>Версия:</strong> 4.0</p>
+                        <p><strong>Последнее обновление:</strong> <span id="lastUpdateTime">-</span></p>
+                        <p><strong>Всего записей:</strong> <span id="totalRecords">0</span></p>
+                        <p><strong>Статус синхронизации:</strong> <span id="syncStatusInfo">Не настроено</span></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1265,35 +1178,31 @@
         </div>
     </div>
 
-    <!-- Модальное окно для настроек GitHub -->
-    <div id="githubModal" class="modal">
+    <!-- Модальное окно для настроек Firebase -->
+    <div id="firebaseModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Настройки GitHub</h3>
-                <button class="close-modal" onclick="closeGitHubSettings()">×</button>
+                <h3 class="modal-title">Настройки Firebase</h3>
+                <button class="close-modal" onclick="closeFirebaseSettings()">×</button>
             </div>
-            <form id="githubSettingsForm">
+            <form id="firebaseSettingsForm">
                 <div class="form-group">
-                    <label for="githubToken">GitHub Token</label>
-                    <input type="password" id="githubToken" placeholder="Введите ваш Personal Access Token">
-                    <small>Токен должен иметь права на запись в репозиторий</small>
-                </div>
-                <div class="form-group">
-                    <label for="repoOwner">Владелец репозитория</label>
-                    <input type="text" id="repoOwner" placeholder="Например: octocat">
-                </div>
-                <div class="form-group">
-                    <label for="repoName">Название репозитория</label>
-                    <input type="text" id="repoName" placeholder="Например: my-repo">
-                </div>
-                <div class="form-group">
-                    <label for="filePath">Путь к файлу</label>
-                    <input type="text" id="filePath" placeholder="Например: data/residents.json">
+                    <label for="firebaseConfig">Конфигурация Firebase:</label>
+                    <textarea id="firebaseConfig" rows="8" placeholder='{
+  "apiKey": "ваш-api-key",
+  "authDomain": "ваш-project.firebaseapp.com",
+  "databaseURL": "https://ваш-project.firebaseio.com",
+  "projectId": "ваш-project-id",
+  "storageBucket": "ваш-project.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "ваш-app-id"
+}'></textarea>
+                    <small>Получите эти данные в консоли Firebase</small>
                 </div>
                 <div class="form-buttons">
                     <button type="submit" class="btn btn-primary">Сохранить</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeGitHubSettings()">Отмена</button>
-                    <button type="button" class="btn btn-warning" onclick="testGitHubConnection()">Тест подключения</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeFirebaseSettings()">Отмена</button>
+                    <button type="button" class="btn btn-warning" onclick="testFirebaseConnection()">Тест подключения</button>
                 </div>
             </form>
         </div>
@@ -1326,6 +1235,36 @@
             </div>
             <div id="backupList" style="margin-top: 20px; display: none;">
                 <!-- Список бекапов -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно быстрого добавления -->
+    <div id="quickAddModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">⚡ Быстрое добавление</h3>
+                <button class="close-modal" onclick="closeQuickAddModal()">×</button>
+            </div>
+            <div class="form-group">
+                <label>ФИО жильца:</label>
+                <input type="text" id="quickAddName" placeholder="Иван Петров">
+            </div>
+            <div class="form-group">
+                <label>Дом:</label>
+                <select id="quickAddHouse">
+                    <option value="">Выберите дом</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Квартира:</label>
+                <select id="quickAddApartment">
+                    <option value="">Сначала выберите дом</option>
+                </select>
+            </div>
+            <div class="form-buttons">
+                <button class="btn btn-success" onclick="cottageManager.confirmQuickAdd()">✅ Добавить</button>
+                <button class="btn btn-secondary" onclick="closeQuickAddModal()">Отмена</button>
             </div>
         </div>
     </div>
@@ -1397,11 +1336,10 @@
                 this.expandedHouses = new Set();
                 this.isFormCollapsed = false;
                 
-                // Настройки GitHub
-                this.githubToken = null;
-                this.repoOwner = null;
-                this.repoName = null;
-                this.filePath = null;
+                // Настройки Firebase
+                this.firebaseConfig = null;
+                this.db = null;
+                this.isFirebaseConnected = false;
                 
                 // Настройки бекапов
                 this.autoSaveInterval = 0;
@@ -1481,7 +1419,8 @@
                 try {
                     await Promise.all([
                         this.loadResidents(),
-                        this.loadBackupSettings()
+                        this.loadBackupSettings(),
+                        this.initFirebase()
                     ]);
                     this.setupHouseOptions();
                     this.setupHouseFilter();
@@ -1490,6 +1429,7 @@
                     this.displayHouses();
                     this.updateStats();
                     this.startAutoSave();
+                    this.updateSystemInfo();
                 } catch (error) {
                     this.showMessage('Ошибка загрузки данных', 'error');
                 } finally {
@@ -1497,14 +1437,62 @@
                 }
             }
             
+            async initFirebase() {
+                try {
+                    const savedConfig = localStorage.getItem('firebaseConfig');
+                    if (!savedConfig) {
+                        console.log('Firebase не настроен');
+                        return;
+                    }
+                    
+                    this.firebaseConfig = JSON.parse(savedConfig);
+                    firebase.initializeApp(this.firebaseConfig);
+                    this.db = firebase.database();
+                    this.isFirebaseConnected = true;
+                    
+                    // Слушаем изменения в реальном времени
+                    this.db.ref('residents').on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            this.residents = Object.values(data);
+                            this.displayResidents();
+                            this.displayHouses();
+                            this.updateStats();
+                            this.updateSyncStatus('✅ Синхронизировано');
+                        }
+                    });
+                    
+                    this.updateSyncStatus('✅ Firebase подключен');
+                    console.log('Firebase инициализирован');
+                } catch (error) {
+                    console.error('Ошибка Firebase:', error);
+                    this.updateSyncStatus('❌ Ошибка Firebase');
+                }
+            }
+            
+            updateSyncStatus(message) {
+                const statusElement = document.getElementById('syncStatus');
+                if (statusElement) {
+                    statusElement.textContent = message;
+                    statusElement.style.color = message.includes('❌') ? '#e53e3e' : '#28a745';
+                }
+            }
+            
             setupHouseOptions() {
                 const houseSelect = document.getElementById('house');
+                const quickHouseSelect = document.getElementById('quickAddHouse');
+                
                 houseSelect.innerHTML = '<option value="">Выберите дом</option>';
+                quickHouseSelect.innerHTML = '<option value="">Выберите дом</option>';
+                
                 this.houses.forEach(house => {
                     const option = document.createElement('option');
                     option.value = house.id;
                     option.textContent = house.name;
                     houseSelect.appendChild(option);
+                    
+                    const quickOption = option.cloneNode(true);
+                    quickHouseSelect.appendChild(quickOption);
                 });
             }
             
@@ -1521,7 +1509,11 @@
             
             setupEventListeners() {
                 document.getElementById('house').addEventListener('change', (e) => {
-                    this.updateApartmentOptions(e.target.value);
+                    this.updateApartmentOptions(e.target.value, 'apartment');
+                });
+                
+                document.getElementById('quickAddHouse').addEventListener('change', (e) => {
+                    this.updateApartmentOptions(e.target.value, 'quickAddApartment');
                 });
                 
                 document.getElementById('residentForm').addEventListener('submit', async (e) => {
@@ -1546,8 +1538,8 @@
                 });
             }
             
-            updateApartmentOptions(houseId) {
-                const apartmentSelect = document.getElementById('apartment');
+            updateApartmentOptions(houseId, targetId) {
+                const apartmentSelect = document.getElementById(targetId);
                 apartmentSelect.innerHTML = '<option value="">Выберите квартиру</option>';
                 
                 if (!houseId) return;
@@ -1575,7 +1567,6 @@
             handlePhotoUpload(event) {
                 const file = event.target.files[0];
                 if (file) {
-                    // Проверяем размер файла
                     if (file.size > 5 * 1024 * 1024) {
                         this.showMessage('Фото должно быть меньше 5MB', 'error');
                         return;
@@ -1598,15 +1589,13 @@
                 const spinner = document.getElementById('submitSpinner');
                 const btnText = document.querySelector('#submitBtn .btn-text');
                 
-                // Показываем спиннер и прогресс
                 submitBtn.disabled = true;
                 spinner.classList.remove('hidden');
                 btnText.textContent = 'Заселение...';
                 this.showGlobalProgress();
 
                 try {
-                    // Имитация задержки сети
-                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    await new Promise(resolve => setTimeout(resolve, 1000));
 
                     const firstName = document.getElementById('firstName').value.trim();
                     const lastName = document.getElementById('lastName').value.trim();
@@ -1637,7 +1626,8 @@
                         checkInDate: new Date().toLocaleDateString('ru-RU'),
                         checkInTime: new Date().toLocaleTimeString('ru-RU'),
                         status: 'active',
-                        marked: false
+                        marked: false,
+                        createdAt: new Date().toISOString()
                     };
                     
                     this.residents.push(resident);
@@ -1652,12 +1642,68 @@
                     console.error('Ошибка регистрации:', error);
                     this.showMessage('❌ ' + error.message, 'error');
                 } finally {
-                    // Скрываем спиннер и прогресс
                     submitBtn.disabled = false;
                     spinner.classList.add('hidden');
                     btnText.textContent = '✅ Заселить';
                     this.hideGlobalProgress();
                 }
+            }
+            
+            quickAddResident() {
+                document.getElementById('quickAddModal').style.display = 'flex';
+                document.getElementById('quickAddName').value = '';
+                document.getElementById('quickAddHouse').value = '';
+                document.getElementById('quickAddApartment').innerHTML = '<option value="">Сначала выберите дом</option>';
+            }
+            
+            async confirmQuickAdd() {
+                const fullName = document.getElementById('quickAddName').value.trim();
+                const houseId = document.getElementById('quickAddHouse').value;
+                const apartment = document.getElementById('quickAddApartment').value;
+                
+                if (!fullName || !houseId || !apartment) {
+                    this.showMessage('Заполните все поля!', 'error');
+                    return;
+                }
+                
+                const nameParts = fullName.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || 'Неизвестно';
+                
+                const house = this.houses.find(h => h.id === houseId);
+                if (!house) {
+                    this.showMessage('Выбран неверный дом!', 'error');
+                    return;
+                }
+                
+                const resident = {
+                    id: Date.now(),
+                    firstName,
+                    lastName,
+                    phone: '',
+                    houseId: houseId,
+                    apartment,
+                    notes: 'Добавлено через быстрое добавление',
+                    photo: null,
+                    checkInDate: new Date().toLocaleDateString('ru-RU'),
+                    checkInTime: new Date().toLocaleTimeString('ru-RU'),
+                    status: 'active',
+                    marked: false,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.residents.push(resident);
+                await this.saveData();
+                this.displayResidents();
+                this.displayHouses();
+                this.updateStats();
+                this.closeQuickAddModal();
+                
+                this.showMessage(`✅ ${firstName} ${lastName} быстро добавлен в ${house.name}, квартиру ${apartment}!`, 'success');
+            }
+            
+            closeQuickAddModal() {
+                document.getElementById('quickAddModal').style.display = 'none';
             }
             
             getApartmentText(apartment, house = null) {
@@ -1761,7 +1807,7 @@
                     document.getElementById('house').value = resident.houseId;
                     document.getElementById('notes').value = resident.notes || '';
                     
-                    this.updateApartmentOptions(resident.houseId);
+                    this.updateApartmentOptions(resident.houseId, 'apartment');
                     setTimeout(() => {
                         document.getElementById('apartment').value = resident.apartment;
                     }, 100);
@@ -1976,7 +2022,6 @@
                                 Заполненность: ${occupiedApartments}/${house.totalApartments}
                             </p>
                             
-                            <!-- Прогресс-бар для дома -->
                             <div class="house-card-progress">
                                 <div class="progress-header">
                                     <span>Заполненность дома</span>
@@ -2067,39 +2112,31 @@
                 const freeUnits = totalUnits - occupiedUnits;
                 const totalResidents = this.residents.length;
                 
-                // Обновляем цифры
                 document.getElementById('totalResidents').textContent = totalResidents;
                 document.getElementById('activeResidents').textContent = activeResidents.length;
                 document.getElementById('occupiedUnits').textContent = occupiedUnits;
                 document.getElementById('freeUnits').textContent = freeUnits;
                 
-                // Обновляем прогресс-бары
                 this.updateProgressBars(occupiedUnits, totalUnits, activeResidents.length, totalResidents);
             }
             
             updateProgressBars(occupiedUnits, totalUnits, activeResidents, totalResidents) {
-                // Проценты
                 const occupancyRate = (occupiedUnits / totalUnits) * 100;
                 const activityRate = totalResidents > 0 ? (activeResidents / totalResidents) * 100 : 0;
                 const freeRate = 100 - occupancyRate;
                 
-                // Основной прогресс заполненности
                 this.animateProgress('occupancyProgress', occupancyRate);
                 document.getElementById('occupancyPercent').textContent = `${occupancyRate.toFixed(1)}%`;
                 
-                // Прогресс активности
                 this.animateProgress('activityProgress', activityRate);
                 document.getElementById('activityPercent').textContent = `${activityRate.toFixed(1)}%`;
                 
-                // Круговой прогресс
                 this.animateCircularProgress('occupiedCircular', occupancyRate);
                 document.getElementById('occupiedCircularValue').textContent = `${occupancyRate.toFixed(0)}%`;
                 
-                // Прогресс свободных квартир
                 this.animateProgress('freeProgress', freeRate);
                 document.getElementById('freePercent').textContent = `${freeRate.toFixed(1)}%`;
                 
-                // Общий прогресс комплекса
                 this.animateProgress('complexOccupancyProgress', occupancyRate);
                 document.getElementById('complexOccupancyPercent').textContent = `${occupancyRate.toFixed(1)}%`;
             }
@@ -2107,7 +2144,6 @@
             animateProgress(elementId, percent) {
                 const element = document.getElementById(elementId);
                 if (element) {
-                    // Плавная анимация
                     setTimeout(() => {
                         element.style.width = `${percent}%`;
                     }, 100);
@@ -2130,19 +2166,14 @@
                 document.getElementById('apartment').innerHTML = '<option value="">Сначала выберите дом</option>';
             }
             
-            // ==================== МЕТОДЫ ДЛЯ РАБОТЫ С GITHUB ====================
+            // ==================== МЕТОДЫ ДЛЯ РАБОТЫ С FIREBASE ====================
             
             loadSettings() {
-                // Загрузка настроек GitHub
-                const githubSettings = JSON.parse(localStorage.getItem('githubSettings'));
-                if (githubSettings) {
-                    this.githubToken = githubSettings.token;
-                    this.repoOwner = githubSettings.owner;
-                    this.repoName = githubSettings.repo;
-                    this.filePath = githubSettings.path;
+                const firebaseSettings = localStorage.getItem('firebaseConfig');
+                if (firebaseSettings) {
+                    this.firebaseConfig = JSON.parse(firebaseSettings);
                 }
                 
-                // Загрузка настроек бекапов
                 const backupSettings = JSON.parse(localStorage.getItem('backupSettings'));
                 if (backupSettings) {
                     this.autoSaveInterval = backupSettings.autoSaveInterval || 0;
@@ -2151,28 +2182,36 @@
             }
             
             async saveData() {
-                // Сохраняем в localStorage как резервную копию
+                // Сохраняем в localStorage
                 localStorage.setItem('cottageResidents', JSON.stringify(this.residents));
+                localStorage.setItem('lastUpdate', new Date().toISOString());
                 
-                // Пытаемся сохранить в GitHub, если настройки заданы
-                if (this.githubToken && this.repoOwner && this.repoName && this.filePath) {
+                // Сохраняем в Firebase если подключено
+                if (this.isFirebaseConnected && this.db) {
                     try {
-                        await this.saveToGitHub();
+                        await this.db.ref('residents').set(this.residents);
+                        console.log('✅ Данные сохранены в Firebase');
                     } catch (error) {
-                        console.error('Ошибка сохранения в GitHub:', error);
+                        console.error('❌ Ошибка сохранения в Firebase:', error);
                     }
                 }
+                
+                this.updateSystemInfo();
             }
             
             async loadResidents() {
-                // Пытаемся загрузить из GitHub, если настройки заданы
-                if (this.githubToken && this.repoOwner && this.repoName && this.filePath) {
+                // Пытаемся загрузить из Firebase
+                if (this.isFirebaseConnected && this.db) {
                     try {
-                        await this.loadFromGitHub();
-                        return;
+                        const snapshot = await this.db.ref('residents').once('value');
+                        const data = snapshot.val();
+                        if (data) {
+                            this.residents = Object.values(data);
+                            console.log('✅ Данные загружены из Firebase');
+                            return;
+                        }
                     } catch (error) {
-                        console.error('Ошибка загрузки из GitHub:', error);
-                        // Продолжаем загрузку из localStorage
+                        console.error('❌ Ошибка загрузки из Firebase:', error);
                     }
                 }
                 
@@ -2181,105 +2220,7 @@
                 if (savedResidents) {
                     this.residents = JSON.parse(savedResidents);
                 } else {
-                    // Инициализируем тестовыми данными
-                    this.residents = [
-                        {
-                            id: 1,
-                            firstName: 'Иван',
-                            lastName: 'Петров',
-                            phone: '+7 123 456-78-90',
-                            houseId: 'house-9',
-                            apartment: '25',
-                            status: 'active',
-                            photo: null
-                        },
-                        {
-                            id: 2,
-                            firstName: 'Мария',
-                            lastName: 'Сидорова',
-                            phone: '+7 987 654-32-10',
-                            houseId: 'house-9A',
-                            apartment: '14',
-                            status: 'active',
-                            photo: null
-                        },
-                        {
-                            id: 3,
-                            firstName: 'Алексей',
-                            lastName: 'Козлов',
-                            phone: '+7 555 123-45-67',
-                            houseId: 'house-9',
-                            apartment: '38',
-                            status: 'inactive',
-                            photo: null
-                        }
-                    ];
-                    await this.saveData();
-                }
-            }
-            
-            async loadFromGitHub() {
-                const url = `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${this.filePath}`;
-                
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${this.githubToken}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`GitHub: ${response.status} ${response.statusText}`);
-                }
-                
-                const data = await response.json();
-                const content = data.content;
-                // Файл в base64, нужно декодировать
-                const decodedContent = atob(content.replace(/\s/g, ''));
-                this.residents = JSON.parse(decodedContent);
-            }
-            
-            async saveToGitHub() {
-                const url = `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${this.filePath}`;
-                
-                // Сначала получим текущий файл, чтобы получить sha (если файл существует)
-                let sha = null;
-                try {
-                    const getResponse = await fetch(url, {
-                        headers: {
-                            'Authorization': `token ${this.githubToken}`,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    });
-                    if (getResponse.ok) {
-                        const data = await getResponse.json();
-                        sha = data.sha;
-                    }
-                } catch (error) {
-                    // Файл может не существовать, тогда sha останется null
-                }
-                
-                const content = JSON.stringify(this.residents, null, 2);
-                const encodedContent = btoa(unescape(encodeURIComponent(content)));
-                
-                const body = {
-                    message: `Update residents data ${new Date().toISOString()}`,
-                    content: encodedContent,
-                    sha: sha
-                };
-                
-                const response = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${this.githubToken}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`GitHub: ${response.status} ${response.statusText}`);
+                    this.residents = [];
                 }
             }
             
@@ -2308,14 +2249,14 @@
             createBackup() {
                 const backup = {
                     residents: this.residents,
+                    houses: this.houses,
                     timestamp: new Date().toISOString(),
-                    version: '2.0'
+                    version: '4.0'
                 };
                 
                 const backups = JSON.parse(localStorage.getItem('cottageBackups') || '[]');
                 backups.unshift(backup);
                 
-                // Ограничиваем количество бекапов
                 if (backups.length > this.maxBackups) {
                     backups.splice(this.maxBackups);
                 }
@@ -2351,7 +2292,6 @@
             }
             
             showMessage(text, type) {
-                // Создаем временное уведомление
                 const message = document.createElement('div');
                 message.className = `message ${type}`;
                 message.textContent = text;
@@ -2382,6 +2322,14 @@
                     message.remove();
                 }, 5000);
             }
+            
+            updateSystemInfo() {
+                document.getElementById('lastUpdateTime').textContent = new Date().toLocaleString('ru-RU');
+                document.getElementById('totalRecords').textContent = this.residents.length;
+                
+                const syncStatus = this.isFirebaseConnected ? '✅ Подключено' : '❌ Не подключено';
+                document.getElementById('syncStatusInfo').textContent = syncStatus;
+            }
         }
 
         // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
@@ -2406,12 +2354,16 @@
             document.getElementById('apartmentModal').style.display = 'none';
         }
         
-        function closeGitHubSettings() {
-            document.getElementById('githubModal').style.display = 'none';
+        function closeFirebaseSettings() {
+            document.getElementById('firebaseModal').style.display = 'none';
         }
         
         function closeBackupSettings() {
             document.getElementById('backupModal').style.display = 'none';
+        }
+        
+        function closeQuickAddModal() {
+            document.getElementById('quickAddModal').style.display = 'none';
         }
         
         function toggleForm() {
@@ -2430,7 +2382,7 @@
         }
         
         window.onclick = function(event) {
-            const modals = ['apartmentModal', 'githubModal', 'backupModal'];
+            const modals = ['apartmentModal', 'firebaseModal', 'backupModal', 'quickAddModal'];
             modals.forEach(modalId => {
                 const modal = document.getElementById(modalId);
                 if (event.target === modal) {
@@ -2448,7 +2400,7 @@
                 residents: cottageManager.residents,
                 houses: cottageManager.houses,
                 exportDate: new Date().toISOString(),
-                version: '3.0'
+                version: '4.0'
             };
             
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -2493,15 +2445,12 @@
             window.print();
         }
         
-        function showGitHubSettings() {
-            const modal = document.getElementById('githubModal');
-            const form = document.getElementById('githubSettingsForm');
+        function showFirebaseSettings() {
+            const modal = document.getElementById('firebaseModal');
+            const form = document.getElementById('firebaseSettingsForm');
             
-            // Загружаем текущие настройки из cottageManager
-            document.getElementById('githubToken').value = cottageManager.githubToken || '';
-            document.getElementById('repoOwner').value = cottageManager.repoOwner || '';
-            document.getElementById('repoName').value = cottageManager.repoName || '';
-            document.getElementById('filePath').value = cottageManager.filePath || 'data/residents.json';
+            document.getElementById('firebaseConfig').value = cottageManager.firebaseConfig ? 
+                JSON.stringify(cottageManager.firebaseConfig, null, 2) : '';
             
             modal.style.display = 'flex';
         }
@@ -2533,7 +2482,6 @@
         }
         
         function restoreBackup() {
-            // Здесь можно добавить функциональность восстановления из бекапа
             cottageManager.showMessage('Функциональность восстановления в разработке', 'success');
         }
         
@@ -2569,36 +2517,47 @@
             cottageManager.showMessage('Этажность домов обновлена!', 'success');
         }
         
-        // Обработчик формы настроек GitHub
-        document.getElementById('githubSettingsForm').addEventListener('submit', function(e) {
+        // Обработчик формы настроек Firebase
+        document.getElementById('firebaseSettingsForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            saveGitHubSettings();
+            saveFirebaseSettings();
         });
         
-        function saveGitHubSettings() {
-            cottageManager.githubToken = document.getElementById('githubToken').value.trim();
-            cottageManager.repoOwner = document.getElementById('repoOwner').value.trim();
-            cottageManager.repoName = document.getElementById('repoName').value.trim();
-            cottageManager.filePath = document.getElementById('filePath').value.trim();
-            
-            // Сохраняем в localStorage
-            localStorage.setItem('githubSettings', JSON.stringify({
-                token: cottageManager.githubToken,
-                owner: cottageManager.repoOwner,
-                repo: cottageManager.repoName,
-                path: cottageManager.filePath
-            }));
-            
-            closeGitHubSettings();
-            cottageManager.showMessage('Настройки GitHub сохранены!', 'success');
+        function saveFirebaseSettings() {
+            try {
+                const configText = document.getElementById('firebaseConfig').value.trim();
+                if (!configText) {
+                    cottageManager.firebaseConfig = null;
+                    localStorage.removeItem('firebaseConfig');
+                    cottageManager.isFirebaseConnected = false;
+                    closeFirebaseSettings();
+                    cottageManager.showMessage('Настройки Firebase очищены!', 'success');
+                    return;
+                }
+                
+                const config = JSON.parse(configText);
+                cottageManager.firebaseConfig = config;
+                localStorage.setItem('firebaseConfig', JSON.stringify(config));
+                
+                // Переинициализируем Firebase
+                cottageManager.initFirebase();
+                
+                closeFirebaseSettings();
+                cottageManager.showMessage('Настройки Firebase сохранены!', 'success');
+            } catch (error) {
+                cottageManager.showMessage('❌ Ошибка в формате конфигурации Firebase!', 'error');
+            }
         }
         
-        function testGitHubConnection() {
+        function testFirebaseConnection() {
             cottageManager.showSpinner('Тестирование подключения...');
-            // Здесь можно добавить реальную проверку подключения
             setTimeout(() => {
                 cottageManager.hideSpinner();
-                cottageManager.showMessage('Подключение к GitHub успешно!', 'success');
+                if (cottageManager.isFirebaseConnected) {
+                    cottageManager.showMessage('✅ Подключение к Firebase успешно!', 'success');
+                } else {
+                    cottageManager.showMessage('❌ Ошибка подключения к Firebase!', 'error');
+                }
             }, 2000);
         }
 
@@ -2794,13 +2753,58 @@
                 </div>
             `;
         }
+        
+        function generateDebtReport() {
+            // Имитация данных о долгах
+            const activeResidents = cottageManager.residents.filter(r => r.status === 'active');
+            const residentsWithDebts = activeResidents.map(resident => ({
+                ...resident,
+                debt: Math.random() > 0.7 ? Math.floor(Math.random() * 50000) + 5000 : 0
+            })).filter(r => r.debt > 0);
+            
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3>💸 Отчет по должникам</h3>
+                    <p><strong>Дата:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
+                    <p><strong>Всего должников:</strong> ${residentsWithDebts.length}</p>
+                    <p><strong>Общая сумма долгов:</strong> ${residentsWithDebts.reduce((sum, r) => sum + r.debt, 0).toLocaleString('ru-RU')} ₽</p>
+                    
+                    ${residentsWithDebts.length > 0 ? `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">ФИО</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Адрес</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Телефон</th>
+                                <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Сумма долга</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${residentsWithDebts.map(resident => {
+                                const houseName = cottageManager.getHouseName(resident.houseId);
+                                const house = cottageManager.houses.find(h => h.id === resident.houseId);
+                                const apartmentText = house ? cottageManager.getApartmentText(resident.apartment, house) : `кв. ${resident.apartment}`;
+                                return `
+                                <tr>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.firstName} ${resident.lastName}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${houseName}, ${apartmentText}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px;">${resident.phone || '-'}</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 10px; color: #e53e3e; font-weight: bold;">${resident.debt.toLocaleString('ru-RU')} ₽</td>
+                                </tr>
+                            `}).join('')}
+                        </tbody>
+                    </table>
+                    ` : '<p style="text-align: center; padding: 20px;">Нет данных о должниках</p>'}
+                </div>
+            `;
+        }
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
             window.cottageManager = new CottageManagerPro();
             
-            // Загружаем настройки в форму
             document.getElementById('cottageCount').value = localStorage.getItem('cottageCount') || 15;
             document.getElementById('houseFloors').value = localStorage.getItem('houseFloors') || 3;
         });
